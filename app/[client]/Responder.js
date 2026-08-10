@@ -19,7 +19,7 @@ export default function Responder({ businessName, defaultTone }) {
         body: JSON.stringify({ review, rating, tone, businessName }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Erreur");
+      if (!res.ok) throw new Error(data.detail ? `${data.error} (${data.detail})` : (data.error || "Erreur"));
       setReply(data.reply);
     } catch (e) {
       setError(e.message);
