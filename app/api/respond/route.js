@@ -5,9 +5,11 @@ import { NextResponse } from "next/server";
 export const dynamic = "force-dynamic";
 
 // Modèle utilisé : les modèles "Flash-Lite" sont ceux qui offrent le quota gratuit
-// le plus généreux chez Google. Si Google renomme/déplace le modèle gratuit à l'avenir,
-// c'est ICI (et uniquement ici) qu'il faut changer le nom.
-const GEMINI_MODEL = "gemini-2.5-flash-lite";
+// le plus généreux chez Google. Google renomme/retire ses modèles assez souvent
+// (dernière mise à jour connue : juillet 2026, modèle "gemini-3.5-flash-lite").
+// Si tu revois une erreur "model ... is no longer available", va sur
+// ai.google.dev/gemini-api/docs/models et remplace la valeur ci-dessous.
+const GEMINI_MODEL = "gemini-3.5-flash-lite";
 
 export async function POST(req) {
   try {
@@ -46,7 +48,7 @@ export async function POST(req) {
       body: JSON.stringify({
         system_instruction: { parts: [{ text: system }] },
         contents: [{ role: "user", parts: [{ text: userMsg }] }],
-        generationConfig: { maxOutputTokens: 300, temperature: 0.7 },
+        generationConfig: { maxOutputTokens: 300 },
       }),
     });
 
