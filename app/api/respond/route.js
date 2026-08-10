@@ -1,8 +1,13 @@
 import { NextResponse } from "next/server";
 
-// Feature 2 : génère une réponse à un avis Google via l'IA.
+// Feature 2 : génère une réponse à un avis Google via l'IA (Google Gemini, gratuit).
 // La clé API reste cachée côté serveur (jamais dans le navigateur).
 export const dynamic = "force-dynamic";
+
+// Modèle utilisé : les modèles "Flash-Lite" sont ceux qui offrent le quota gratuit
+// le plus généreux chez Google. Si Google renomme/déplace le modèle gratuit à l'avenir,
+// c'est ICI (et uniquement ici) qu'il faut changer le nom.
+const GEMINI_MODEL = "gemini-2.5-flash-lite";
 
 export async function POST(req) {
   try {
@@ -10,8 +15,8 @@ export async function POST(req) {
     if (!review || !review.trim()) {
       return NextResponse.json({ error: "Avis vide." }, { status: 400 });
     }
-    if (!process.env.ANTHROPIC_API_KEY) {
-      return NextResponse.json({ error: "Clé API manquante côté serveur." }, { status: 500 });
+    if (!process.env.GEMINI_API_KEY) {
+      return NextResponse.json({ error: "Clé API Gemini manquante côté serveur." }, { status: 500 });
     }
 
     const system = [
@@ -30,32 +35,35 @@ export async function POST(req) {
       (rating ? `Note laissée : ${rating}/5.\n` : "") +
       `Avis du client :\n"""${review.trim()}"""`;
 
-    const r = await fetch("https://api.anthropic.com/v1/messages", {
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`;
+
+    const r = await fetch(url, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "x-api-key": process.env.ANTHROPIC_API_KEY,
-        "anthropic-version": "2023-06-01",
+        "x-goog-api-key": process.env.GEMINI_API_KEY,
       },
       body: JSON.stringify({
-        model: "claude-haiku-4-5-20251001", // rapide + peu cher ; tu peux changer de modèle
-        max_tokens: 400,
-        system,
-        messages: [{ role: "user", content: userMsg }],
+        system_instruction: { parts: [{ text: system }] },
+        contents: [{ role: "user", parts: [{ text: userMsg }] }],
+        generationConfig: { maxOutputTokens: 300, temperature: 0.7 },
       }),
     });
 
     if (!r.ok) {
       const detail = await r.text();
-      return NextResponse.json({ error: "Erreur API IA.", detail }, { status: 502 });
+      return NextResponse.json({ error: "Erreur API IA (Gemini).", detail }, { status: 502 });
     }
 
     const data = await r.json();
-    const text = (data.content || [])
-      .filter((b) => b.type === "text")
-      .map((b) => b.text)
+    const text = (data.candidates?.[0]?.content?.parts || [])
+      .map((p) => p.text || "")
       .join("\n")
       .trim();
+
+    if (!text) {
+      return NextResponse.json({ error: "Réponse IA vide.", detail: JSON.stringify(data).slice(0, 300) }, { status: 502 });
+    }
 
     return NextResponse.json({ reply: text });
   } catch (e) {
