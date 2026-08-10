@@ -20,7 +20,7 @@ export default function Admin() {
         body: JSON.stringify({ password, name, googleUrl, tone, pin }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Erreur");
+      if (!res.ok) throw new Error(data.detail ? `${data.error} (${data.detail})` : (data.error || "Erreur"));
       setResult(data);
       setName(""); setGoogleUrl(""); setPin("");
     } catch (e) {
