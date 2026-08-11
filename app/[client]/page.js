@@ -1,5 +1,6 @@
 import { getClient, getTaps, getDailyTaps } from "@/lib/db";
 import Responder from "./Responder";
+import Analyzer from "./Analyzer";
 
 export const dynamic = "force-dynamic";
 
@@ -44,7 +45,7 @@ export default async function Dashboard({ params, searchParams }) {
         <div className="hero-inner">
           <div className="eyebrow"><span className="dot"></span>AvisBoost · Tableau de bord</div>
           <h1 className="hero-title">{c.name}</h1>
-          <p className="hero-sub">Le suivi de vos avis Google, en direct — et un assistant pour répondre en quelques secondes.</p>
+          <p className="hero-sub">Le suivi de vos avis Google, en direct — et un assistant pour répondre et analyser en quelques secondes.</p>
         </div>
       </div>
 
@@ -86,6 +87,17 @@ export default async function Dashboard({ params, searchParams }) {
             </div>
             <p className="chart-foot">Chaque scan correspond à un client dirigé vers votre page d'avis Google.</p>
           </div>
+        </div>
+
+        <div className="card">
+          <div className="card-head">
+            <div>
+              <h2 className="card-title">Analyse des avis</h2>
+              <p className="card-hint">Les thèmes qui reviennent et vos axes d'amélioration</p>
+            </div>
+            <span className="tag">Assistant IA</span>
+          </div>
+          <Analyzer businessName={c.name} />
         </div>
 
         <div className="card">
