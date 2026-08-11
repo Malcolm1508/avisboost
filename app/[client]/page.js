@@ -4,6 +4,7 @@ import { verifySession, cookieName } from "@/lib/auth";
 import Responder from "./Responder";
 import Analyzer from "./Analyzer";
 import Login from "./Login";
+import CountUp from "./CountUp";
 
 export const dynamic = "force-dynamic";
 
@@ -32,21 +33,34 @@ export default async function Dashboard({ params }) {
   const max = Math.max(1, ...daily.map((d) => d.value));
   const week = daily.slice(-7).reduce((s, d) => s + d.value, 0);
   const today = daily.length ? daily[daily.length - 1].value : 0;
+  const initial = (c.name || "?").trim().charAt(0).toUpperCase();
 
   return (
     <>
       <div className="hero">
-        <div className="hero-inner">
-          <div className="eyebrow"><span className="dot"></span>AvisBoost · Tableau de bord</div>
-          <h1 className="hero-title">{c.name}</h1>
-          <p className="hero-sub">Le suivi de vos avis Google, en direct — et un assistant pour répondre et analyser en quelques secondes.</p>
+        <div className="hero-inner hero-brand">
+          <div className="brand-logo">
+            {c.logoUrl
+              ? <img src={c.logoUrl} alt={c.name} />
+              : <span className="brand-mono">{initial}</span>}
+          </div>
+          <div className="brand-text">
+            <div className="eyebrow"><span className="dot"></span>AvisBoost · Tableau de bord</div>
+            <h1 className="hero-title">{c.name}</h1>
+            {c.address
+              ? <p className="hero-addr">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                  {c.address}
+                </p>
+              : <p className="hero-sub">Le suivi de vos avis Google, en direct.</p>}
+          </div>
         </div>
       </div>
 
       <div className="container pull-up">
-        <div className="card stat-card">
+        <div className="card stat-card reveal hoverable" style={{ animationDelay: "0ms" }}>
           <div className="stat-top">
-            <span className="stat-num">{taps}</span>
+            <span className="stat-num"><CountUp value={taps} /></span>
             <span className="stat-label">scans de votre carte au total</span>
           </div>
           <div className="stat-chips">
@@ -61,7 +75,7 @@ export default async function Dashboard({ params }) {
           </div>
         </div>
 
-        <div className="card">
+        <div className="card reveal hoverable" style={{ animationDelay: "90ms" }}>
           <div className="card-head">
             <div>
               <h2 className="card-title">Activité</h2>
@@ -83,7 +97,7 @@ export default async function Dashboard({ params }) {
           </div>
         </div>
 
-        <div className="card">
+        <div className="card reveal hoverable" style={{ animationDelay: "180ms" }}>
           <div className="card-head">
             <div>
               <h2 className="card-title">Analyse des avis</h2>
@@ -94,7 +108,7 @@ export default async function Dashboard({ params }) {
           <Analyzer businessName={c.name} />
         </div>
 
-        <div className="card">
+        <div className="card reveal hoverable" style={{ animationDelay: "270ms" }}>
           <div className="card-head">
             <div>
               <h2 className="card-title">Répondre à un avis</h2>
