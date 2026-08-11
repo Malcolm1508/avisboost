@@ -1,36 +1,30 @@
+import { cookies } from "next/headers";
 import { getClient, getTaps, getDailyTaps } from "@/lib/db";
+import { verifySession, cookieName } from "@/lib/auth";
 import Responder from "./Responder";
 import Analyzer from "./Analyzer";
+import Login from "./Login";
 
 export const dynamic = "force-dynamic";
 
-export default async function Dashboard({ params, searchParams }) {
+export default async function Dashboard({ params }) {
   const { client } = await params;
-  const sp = await searchParams;
   const c = await getClient(client);
 
   if (!c) {
     return (
-      <>
-        <div className="hero"><div className="hero-inner">
-          <div className="eyebrow"><span className="dot"></span>AvisBoost</div>
-          <h1 className="hero-title">Tableau de bord introuvable</h1>
-          <p className="hero-sub">Aucun établissement ne correspond à « {client} ».</p>
-        </div></div>
-      </>
+      <div className="hero"><div className="hero-inner">
+        <div className="eyebrow"><span className="dot"></span>AvisBoost</div>
+        <h1 className="hero-title">Tableau de bord introuvable</h1>
+        <p className="hero-sub">Aucun établissement ne correspond à « {client} ».</p>
+      </div></div>
     );
   }
 
-  if (c.pin && sp?.pin !== c.pin) {
-    return (
-      <>
-        <div className="hero"><div className="hero-inner">
-          <div className="eyebrow"><span className="dot"></span>AvisBoost</div>
-          <h1 className="hero-title">Accès protégé</h1>
-          <p className="hero-sub">Ajoutez votre code à la fin de l'adresse : ?pin=VOTRE_CODE</p>
-        </div></div>
-      </>
-    );
+  const jar = await cookies();
+  const token = jar.get(cookieName(client))?.value;
+  if (!verifySession(token, client)) {
+    return <Login client={client} name={c.name} />;
   }
 
   const taps = await getTaps(client);
@@ -110,6 +104,10 @@ export default async function Dashboard({ params, searchParams }) {
           </div>
           <Responder businessName={c.name} defaultTone={c.tone || ""} />
         </div>
+
+        <p style={{ textAlign: "center", marginTop: 8 }}>
+          <a href={`/api/auth/logout?client=${client}`} className="pill">Se déconnecter</a>
+        </p>
       </div>
     </>
   );
