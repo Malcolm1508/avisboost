@@ -6,7 +6,7 @@ export const dynamic = "force-dynamic";
 
 export async function POST(req) {
   try {
-    const { password, name, googleUrl, tone, clientPassword } = await req.json();
+    const { password, name, googleUrl, tone, clientPassword, logoUrl, address } = await req.json();
 
     if (password !== process.env.ADMIN_PASSWORD) {
       return NextResponse.json({ error: "Mot de passe admin incorrect." }, { status: 401 });
@@ -27,6 +27,8 @@ export async function POST(req) {
       googleUrl,
       tone: tone || "chaleureux et professionnel",
       pwhash: hashPassword(clientPassword),
+      logoUrl: logoUrl || "",
+      address: address || "",
     });
 
     const base = process.env.PUBLIC_BASE_URL || "";
