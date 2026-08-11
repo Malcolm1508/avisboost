@@ -6,7 +6,7 @@ export default function Admin() {
   const [name, setName] = useState("");
   const [googleUrl, setGoogleUrl] = useState("");
   const [tone, setTone] = useState("chaleureux et professionnel");
-  const [pin, setPin] = useState("");
+  const [clientPassword, setClientPassword] = useState("");
   const [result, setResult] = useState(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -17,12 +17,12 @@ export default function Admin() {
       const res = await fetch("/api/admin/create", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ password, name, googleUrl, tone, pin }),
+        body: JSON.stringify({ password, name, googleUrl, tone, clientPassword }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.detail ? `${data.error} (${data.detail})` : (data.error || "Erreur"));
-      setResult(data);
-      setName(""); setGoogleUrl(""); setPin("");
+      setResult({ ...data, pw: clientPassword });
+      setName(""); setGoogleUrl(""); setClientPassword("");
     } catch (e) {
       setError(e.message);
     } finally {
@@ -31,43 +31,62 @@ export default function Admin() {
   }
 
   return (
-    <main className="wrap">
-      <span className="pill">Espace admin</span>
-      <h1 style={{ marginTop: 8 }}>Nouveau client</h1>
-      <p className="sub">Remplis, clique, et les deux liens sont prêts. Aucun code à toucher.</p>
+    <>
+      <div className="hero"><div className="hero-inner">
+        <div className="eyebrow"><span className="dot"></span>AvisBoost · Admin</div>
+        <h1 className="hero-title">Nouveau client</h1>
+        <p className="hero-sub">Remplis, clique, et tout est prêt : les liens et l'accès du commerçant.</p>
+      </div></div>
 
-      <div className="card">
-        <label>Mot de passe admin</label>
-        <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
-
-        <label>Nom de l'établissement</label>
-        <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Ex : Salon Marie" />
-
-        <label>Lien d'avis Google du client</label>
-        <input value={googleUrl} onChange={(e) => setGoogleUrl(e.target.value)}
-          placeholder="https://g.page/r/…  ou  …/writereview?placeid=…" />
-
-        <label>Ton des réponses IA</label>
-        <input value={tone} onChange={(e) => setTone(e.target.value)} />
-
-        <label>Code PIN du tableau de bord (facultatif)</label>
-        <input value={pin} onChange={(e) => setPin(e.target.value)} placeholder="Ex : 4821" />
-
-        <button onClick={create} disabled={loading || !password || !name || !googleUrl}>
-          {loading ? "Création…" : "Créer le client"}
-        </button>
-        {error && <p className="err" style={{ marginTop: 12 }}>{error}</p>}
-      </div>
-
-      {result && (
+      <div className="container pull-up">
         <div className="card">
-          <h2 style={{ marginTop: 0 }}>{result.updated ? "Client mis à jour" : "Client créé"} ✓</h2>
-          <label>1. À programmer dans la carte NFC</label>
-          <div className="mono">{result.cardUrl}</div>
-          <label>2. À donner au commerçant (son tableau de bord)</label>
-          <div className="mono">{result.dashboardUrl}</div>
+          <div className="field">
+            <label className="label">Mot de passe admin</label>
+            <input className="input" type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+          </div>
+
+          <div className="field">
+            <label className="label">Nom de l'établissement</label>
+            <input className="input" value={name} onChange={(e) => setName(e.target.value)} placeholder="Ex : Salon Marie" />
+          </div>
+
+          <div className="field">
+            <label className="label">Lien d'avis Google du client</label>
+            <input className="input" value={googleUrl} onChange={(e) => setGoogleUrl(e.target.value)}
+              placeholder="https://g.page/r/…  ou  …/writereview?placeid=…" />
+          </div>
+
+          <div className="field">
+            <label className="label">Ton des réponses IA</label>
+            <input className="input" value={tone} onChange={(e) => setTone(e.target.value)} />
+          </div>
+
+          <div className="field">
+            <label className="label">Mot de passe du client (pour son tableau de bord)</label>
+            <input className="input" value={clientPassword} onChange={(e) => setClientPassword(e.target.value)}
+              placeholder="Ex : Marie2026" />
+          </div>
+
+          <button className="btn btn-primary btn-block" onClick={create}
+            disabled={loading || !password || !name || !googleUrl || !clientPassword}>
+            {loading ? "Création…" : "Créer le client"}
+          </button>
+          {error && <p className="err">{error}</p>}
         </div>
-      )}
-    </main>
+
+        {result && (
+          <div className="card">
+            <h2 className="card-title" style={{ marginBottom: 14 }}>{result.updated ? "Client mis à jour ✓" : "Client créé ✓"}</h2>
+            <label className="label">1. À programmer dans la carte NFC</label>
+            <div className="mono">{result.cardUrl}</div>
+            <label className="label" style={{ marginTop: 14 }}>2. Adresse du tableau de bord (à donner au commerçant)</label>
+            <div className="mono">{result.dashboardUrl}</div>
+            <label className="label" style={{ marginTop: 14 }}>3. Son mot de passe de connexion</label>
+            <div className="mono">{result.pw}</div>
+            <p className="footnote">Note bien ce mot de passe : il est chiffré côté serveur, tu ne pourras plus le relire ensuite (il faudra recréer le client pour le changer).</p>
+          </div>
+        )}
+      </div>
+    </>
   );
 }
