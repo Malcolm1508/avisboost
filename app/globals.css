@@ -195,3 +195,26 @@ a{color:var(--brand-strong)}
 @media (prefers-reduced-motion: reduce){
   *{animation:none !important;transition:none !important}
 }
+/* ---------- ANALYSE DES VERBATIMS ---------- */
+.analysis{margin-top:18px;display:flex;flex-direction:column;gap:20px}
+.analysis-top{display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap}
+.sent{font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:.05em;padding:5px 11px;border-radius:999px;white-space:nowrap}
+.sent-pos{background:#e6f6ee;color:#0a7d47;border:1px solid #bfe6cf}
+.sent-mid{background:var(--gold-soft);color:#9a6c05;border:1px solid #f0e2b8}
+.sent-neg{background:#fbeceb;color:#b23127;border:1px solid #f2cfcb}
+.analysis-resume{margin:0;flex:1;min-width:200px;font-weight:500}
+.asec-head{display:flex;align-items:center;gap:8px;font-family:var(--font-display);font-weight:700;font-size:15px;margin-bottom:8px}
+.asec-head .adot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.adot.pos{background:#12a184}
+.adot.neg{background:var(--gold)}
+.adot.axe{background:var(--brand)}
+.theme{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-top:1px solid var(--line)}
+.theme:first-of-type{border-top:0}
+.theme-main{flex:1}
+.theme-name{font-weight:600}
+.theme-ex{color:var(--muted);font-size:13px;margin-top:2px}
+.freq{flex-shrink:0;font-weight:700;font-size:12px;color:var(--brand-strong);background:var(--surface-2);border:1px solid var(--line);padding:3px 9px;border-radius:999px;white-space:nowrap}
+.axes{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:9px}
+.axes li{display:flex;gap:9px;align-items:flex-start;background:var(--surface-2);border:1px solid var(--line);border-radius:var(--radius-sm);padding:11px 13px;font-size:14px}
+.axes li::before{content:"→";color:var(--brand);font-weight:700}
+.empty-note{color:var(--muted);font-size:13.5px;font-style:italic}
