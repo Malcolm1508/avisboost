@@ -7,6 +7,8 @@ export default function Admin() {
   const [googleUrl, setGoogleUrl] = useState("");
   const [tone, setTone] = useState("chaleureux et professionnel");
   const [clientPassword, setClientPassword] = useState("");
+  const [logoUrl, setLogoUrl] = useState("");
+  const [address, setAddress] = useState("");
   const [result, setResult] = useState(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -17,12 +19,12 @@ export default function Admin() {
       const res = await fetch("/api/admin/create", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ password, name, googleUrl, tone, clientPassword }),
+        body: JSON.stringify({ password, name, googleUrl, tone, clientPassword, logoUrl, address }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.detail ? `${data.error} (${data.detail})` : (data.error || "Erreur"));
       setResult({ ...data, pw: clientPassword });
-      setName(""); setGoogleUrl(""); setClientPassword("");
+      setName(""); setGoogleUrl(""); setClientPassword(""); setLogoUrl(""); setAddress("");
     } catch (e) {
       setError(e.message);
     } finally {
@@ -39,7 +41,7 @@ export default function Admin() {
       </div></div>
 
       <div className="container pull-up">
-        <div className="card">
+        <div className="card reveal">
           <div className="field">
             <label className="label">Mot de passe admin</label>
             <input className="input" type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
@@ -54,6 +56,19 @@ export default function Admin() {
             <label className="label">Lien d'avis Google du client</label>
             <input className="input" value={googleUrl} onChange={(e) => setGoogleUrl(e.target.value)}
               placeholder="https://g.page/r/…  ou  …/writereview?placeid=…" />
+          </div>
+
+          <div className="field">
+            <label className="label">Adresse (facultatif)</label>
+            <input className="input" value={address} onChange={(e) => setAddress(e.target.value)}
+              placeholder="Ex : 12 rue Saint-Dizier, 54000 Nancy" />
+          </div>
+
+          <div className="field">
+            <label className="label">URL du logo (facultatif)</label>
+            <input className="input" value={logoUrl} onChange={(e) => setLogoUrl(e.target.value)}
+              placeholder="https://… (lien direct vers une image)" />
+            <p className="footnote">Clic droit sur le logo du commerçant (site, Facebook, fiche Google) → « Copier l'adresse de l'image ». S'il n'y en a pas, laisse vide : son initiale s'affichera joliment.</p>
           </div>
 
           <div className="field">
@@ -75,7 +90,7 @@ export default function Admin() {
         </div>
 
         {result && (
-          <div className="card">
+          <div className="card reveal">
             <h2 className="card-title" style={{ marginBottom: 14 }}>{result.updated ? "Client mis à jour ✓" : "Client créé ✓"}</h2>
             <label className="label">1. À programmer dans la carte NFC</label>
             <div className="mono">{result.cardUrl}</div>
