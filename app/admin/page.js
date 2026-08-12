@@ -9,6 +9,9 @@ export default function Admin() {
   const [clientPassword, setClientPassword] = useState("");
   const [logoUrl, setLogoUrl] = useState("");
   const [address, setAddress] = useState("");
+  const [owner, setOwner] = useState("");
+  const [specialty, setSpecialty] = useState("");
+  const [style, setStyle] = useState("");
   const [result, setResult] = useState(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -19,12 +22,13 @@ export default function Admin() {
       const res = await fetch("/api/admin/create", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ password, name, googleUrl, tone, clientPassword, logoUrl, address }),
+        body: JSON.stringify({ password, name, googleUrl, tone, clientPassword, logoUrl, address, owner, specialty, style }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.detail ? `${data.error} (${data.detail})` : (data.error || "Erreur"));
       setResult({ ...data, pw: clientPassword });
       setName(""); setGoogleUrl(""); setClientPassword(""); setLogoUrl(""); setAddress("");
+      setOwner(""); setSpecialty(""); setStyle("");
     } catch (e) {
       setError(e.message);
     } finally {
@@ -69,6 +73,25 @@ export default function Admin() {
             <input className="input" value={logoUrl} onChange={(e) => setLogoUrl(e.target.value)}
               placeholder="https://… (lien direct vers une image)" />
             <p className="footnote">Clic droit sur le logo du commerçant (site, Facebook, fiche Google) → « Copier l'adresse de l'image ». S'il n'y en a pas, laisse vide : son initiale s'affichera joliment.</p>
+          </div>
+
+          <div style={{ borderTop: "1px solid var(--line)", margin: "20px 0 4px", paddingTop: 16 }}>
+            <p className="card-hint" style={{ margin: 0 }}>Personnalisation de l'assistant IA (facultatif mais recommandé)</p>
+          </div>
+
+          <div className="field">
+            <label className="label">Prénom du dirigeant</label>
+            <input className="input" value={owner} onChange={(e) => setOwner(e.target.value)} placeholder="Ex : Marie" />
+          </div>
+
+          <div className="field">
+            <label className="label">Activité / spécialité</label>
+            <input className="input" value={specialty} onChange={(e) => setSpecialty(e.target.value)} placeholder="Ex : institut de beauté, cuisine italienne, garage auto…" />
+          </div>
+
+          <div className="field">
+            <label className="label">Style de communication</label>
+            <input className="input" value={style} onChange={(e) => setStyle(e.target.value)} placeholder="Ex : humain et jamais robotique, tutoiement, ton premium…" />
           </div>
 
           <div className="field">
