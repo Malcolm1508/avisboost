@@ -6,6 +6,7 @@ import Analyzer from "./Analyzer";
 import Login from "./Login";
 import CountUp from "./CountUp";
 import ReviewUpdate from "./ReviewUpdate";
+import Plan from "./Plan";
 
 export const dynamic = "force-dynamic";
 
@@ -148,6 +149,17 @@ export default async function Dashboard({ params }) {
         </div>
 
         <div className="card reveal hoverable" style={{ animationDelay: "280ms" }}>
+          <div className="card-head">
+            <div>
+              <h2 className="card-title">Plan d'action</h2>
+              <p className="card-hint">Vos priorités concrètes, basées sur vos avis et vos chiffres</p>
+            </div>
+            <span className="tag">Assistant IA</span>
+          </div>
+          <Plan />
+        </div>
+
+        <div className="card reveal hoverable" style={{ animationDelay: "350ms" }}>
           <div className="card-head">
             <div>
               <h2 className="card-title">Répondre à un avis</h2>
