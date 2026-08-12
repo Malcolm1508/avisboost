@@ -1,10 +1,11 @@
 import { cookies } from "next/headers";
-import { getClient, getTaps, getDailyTaps } from "@/lib/db";
+import { getClient, getTaps, getDailyTaps, getReviews } from "@/lib/db";
 import { verifySession, cookieName } from "@/lib/auth";
 import Responder from "./Responder";
 import Analyzer from "./Analyzer";
 import Login from "./Login";
 import CountUp from "./CountUp";
+import ReviewUpdate from "./ReviewUpdate";
 
 export const dynamic = "force-dynamic";
 
@@ -34,6 +35,14 @@ export default async function Dashboard({ params }) {
   const week = daily.slice(-7).reduce((s, d) => s + d.value, 0);
   const today = daily.length ? daily[daily.length - 1].value : 0;
   const initial = (c.name || "?").trim().charAt(0).toUpperCase();
+
+  const rev = await getReviews(client);
+  let generated = 0, scansSince = 0, conversion = null;
+  if (rev) {
+    generated = Math.max(0, rev.current - rev.base);
+    scansSince = Math.max(0, taps - rev.tapsAtBase);
+    conversion = scansSince > 0 ? Math.min(100, Math.round((generated / scansSince) * 100)) : null;
+  }
 
   return (
     <>
@@ -75,7 +84,37 @@ export default async function Dashboard({ params }) {
           </div>
         </div>
 
-        <div className="card reveal hoverable" style={{ animationDelay: "90ms" }}>
+        <div className="card reveal hoverable" style={{ animationDelay: "70ms" }}>
+          <div className="card-head">
+            <div>
+              <h2 className="card-title">Performance de la carte</h2>
+              <p className="card-hint">Combien de vos scans se transforment en avis</p>
+            </div>
+            <span className="tag">Conversion</span>
+          </div>
+
+          {rev ? (
+            <>
+              <div className="stat-top">
+                <span className="stat-num" style={{ fontSize: "clamp(40px,11vw,68px)" }}>
+                  {conversion != null ? `${conversion}%` : "—"}
+                </span>
+                <span className="stat-label">de vos scans deviennent des avis</span>
+              </div>
+              <div className="stat-chips">
+                <div className="chip"><span className="n">{scansSince}</span><span className="l">scans suivis</span></div>
+                <div className="chip gold"><span className="n">+{generated}</span><span className="l">avis générés</span></div>
+                <div className="chip"><span className="n">{rev.current}</span><span className="l">avis Google au total</span></div>
+              </div>
+            </>
+          ) : (
+            <p className="footnote">Renseignez votre nombre d'avis Google actuel ci-dessous pour activer le suivi de conversion.</p>
+          )}
+
+          <ReviewUpdate current={rev ? rev.current : ""} />
+        </div>
+
+        <div className="card reveal hoverable" style={{ animationDelay: "140ms" }}>
           <div className="card-head">
             <div>
               <h2 className="card-title">Activité</h2>
@@ -97,7 +136,7 @@ export default async function Dashboard({ params }) {
           </div>
         </div>
 
-        <div className="card reveal hoverable" style={{ animationDelay: "180ms" }}>
+        <div className="card reveal hoverable" style={{ animationDelay: "210ms" }}>
           <div className="card-head">
             <div>
               <h2 className="card-title">Analyse des avis</h2>
@@ -108,7 +147,7 @@ export default async function Dashboard({ params }) {
           <Analyzer businessName={c.name} />
         </div>
 
-        <div className="card reveal hoverable" style={{ animationDelay: "270ms" }}>
+        <div className="card reveal hoverable" style={{ animationDelay: "280ms" }}>
           <div className="card-head">
             <div>
               <h2 className="card-title">Répondre à un avis</h2>
