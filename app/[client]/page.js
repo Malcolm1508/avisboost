@@ -7,6 +7,7 @@ import Login from "./Login";
 import CountUp from "./CountUp";
 import ReviewUpdate from "./ReviewUpdate";
 import Plan from "./Plan";
+import Posts from "./Posts";
 
 export const dynamic = "force-dynamic";
 
@@ -168,6 +169,17 @@ export default async function Dashboard({ params }) {
             <span className="tag">Assistant IA</span>
           </div>
           <Responder businessName={c.name} defaultTone={c.tone || ""} />
+        </div>
+
+        <div className="card reveal hoverable" style={{ animationDelay: "420ms" }}>
+          <div className="card-head">
+            <div>
+              <h2 className="card-title">Transformer un avis en publications</h2>
+              <p className="card-hint">1 avis → un post Instagram, Facebook, une citation site et une story</p>
+            </div>
+            <span className="tag">Assistant IA</span>
+          </div>
+          <Posts />
         </div>
 
         <p style={{ textAlign: "center", marginTop: 8 }}>
