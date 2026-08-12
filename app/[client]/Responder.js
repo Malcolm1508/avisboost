@@ -13,10 +13,13 @@ export default function Responder({ businessName, defaultTone }) {
   async function generate() {
     setLoading(true); setError(""); setReply(""); setCopied(false);
     try {
+      const client = typeof window !== "undefined"
+        ? decodeURIComponent(window.location.pathname.split("/").filter(Boolean)[0] || "")
+        : "";
       const res = await fetch("/api/respond", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ review, rating, tone, businessName }),
+        body: JSON.stringify({ review, rating, tone, businessName, client }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.detail ? `${data.error} (${data.detail})` : (data.error || "Erreur"));
