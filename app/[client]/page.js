@@ -7,7 +7,7 @@ import Login from "./Login";
 import CountUp from "./CountUp";
 import ReviewUpdate from "./ReviewUpdate";
 import Plan from "./Plan";
-import Posts from "./Posts";
+import PostVisual from "./PostVisual";
 
 export const dynamic = "force-dynamic";
 
@@ -174,12 +174,12 @@ export default async function Dashboard({ params }) {
         <div className="card reveal hoverable" style={{ animationDelay: "420ms" }}>
           <div className="card-head">
             <div>
-              <h2 className="card-title">Transformer un avis en publications</h2>
-              <p className="card-hint">1 avis → un post Instagram, Facebook, une citation site et une story</p>
+              <h2 className="card-title">Créer un visuel à partir d'un avis</h2>
+              <p className="card-hint">Une image prête à poster (Insta, Facebook, story) + les légendes</p>
             </div>
-            <span className="tag">Assistant IA</span>
+            <span className="tag">Studio</span>
           </div>
-          <Posts />
+          <PostVisual businessName={c.name} />
         </div>
 
         <p style={{ textAlign: "center", marginTop: 8 }}>
