@@ -253,3 +253,12 @@ a{color:var(--brand-strong)}
 .task-why{color:var(--muted);font-size:13px}
 .task.done .task-action{text-decoration:line-through;color:var(--muted)}
 .task:hover{opacity:.85}
+/* ---------- SÉLECTEUR DE PÉRIODE + COMPARAISON ---------- */
+.seg{display:inline-flex;background:var(--surface-2);border:1px solid var(--line);border-radius:999px;padding:3px;gap:2px}
+.seg button{border:0;background:none;font:inherit;font-weight:600;font-size:13px;color:var(--muted);padding:7px 15px;border-radius:999px;cursor:pointer;transition:all .15s ease}
+.seg button.active{background:var(--surface);color:var(--brand-strong);box-shadow:var(--shadow-sm)}
+.delta{display:inline-flex;align-items:center;gap:6px;font-weight:700;font-size:13px;padding:5px 11px;border-radius:999px}
+.delta.up{background:#e6f6ee;color:#0a7d47;border:1px solid #bfe6cf}
+.delta.down{background:#fbeceb;color:#b23127;border:1px solid #f2cfcb}
+.delta.flat{background:var(--surface-2);color:var(--muted);border:1px solid var(--line)}
+.period-total{font-family:var(--font-display);font-weight:800;font-size:34px;color:var(--text);letter-spacing:-.02em}
