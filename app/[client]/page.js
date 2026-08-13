@@ -1,5 +1,5 @@
 import { cookies } from "next/headers";
-import { getClient, getTaps, getDailyTaps, getReviews } from "@/lib/db";
+import { getClient, getTaps, getDailyTaps, getReviews, getPlan } from "@/lib/db";
 import { verifySession, cookieName } from "@/lib/auth";
 import Responder from "./Responder";
 import Analyzer from "./Analyzer";
@@ -39,6 +39,7 @@ export default async function Dashboard({ params }) {
   const initial = (c.name || "?").trim().charAt(0).toUpperCase();
 
   const rev = await getReviews(client);
+  const plan = await getPlan(client);
   let generated = 0, scansSince = 0, conversion = null;
   if (rev) {
     generated = Math.max(0, rev.current - rev.base);
@@ -157,7 +158,7 @@ export default async function Dashboard({ params }) {
             </div>
             <span className="tag">Assistant IA</span>
           </div>
-          <Plan />
+          <Plan initialPlan={plan} />
         </div>
 
         <div className="card reveal hoverable" style={{ animationDelay: "350ms" }}>
