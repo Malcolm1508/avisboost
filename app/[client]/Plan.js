@@ -1,192 +1,117 @@
-import { cookies } from "next/headers";
-import { getClient, getTaps, getDailyTaps, getReviews, getPlan } from "@/lib/db";
-import { verifySession, cookieName } from "@/lib/auth";
-import Responder from "./Responder";
-import Analyzer from "./Analyzer";
-import Login from "./Login";
-import CountUp from "./CountUp";
-import ReviewUpdate from "./ReviewUpdate";
-import Plan from "./Plan";
-import PostVisual from "./PostVisual";
+"use client";
+import { useState } from "react";
 
-export const dynamic = "force-dynamic";
+export default function Plan({ initialPlan }) {
+  const [reviews, setReviews] = useState("");
+  const [plan, setPlan] = useState(initialPlan || null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [showGen, setShowGen] = useState(!initialPlan);
 
-export default async function Dashboard({ params }) {
-  const { client } = await params;
-  const c = await getClient(client);
-
-  if (!c) {
-    return (
-      <div className="hero"><div className="hero-inner">
-        <div className="eyebrow"><span className="dot"></span>AvisBoost</div>
-        <h1 className="hero-title">Tableau de bord introuvable</h1>
-        <p className="hero-sub">Aucun établissement ne correspond à « {client} ».</p>
-      </div></div>
-    );
+  function clientId() {
+    return decodeURIComponent(window.location.pathname.split("/").filter(Boolean)[0] || "");
   }
 
-  const jar = await cookies();
-  const token = jar.get(cookieName(client))?.value;
-  if (!verifySession(token, client)) {
-    return <Login client={client} name={c.name} />;
+  async function generate() {
+    if (plan && !window.confirm("Générer un nouveau plan remplacera le plan actuel et sa progression. Continuer ?")) return;
+    setLoading(true); setError("");
+    try {
+      const res = await fetch("/api/plan/generate", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ client: clientId(), reviews }),
+      });
+      const j = await res.json();
+      if (!res.ok) throw new Error(j.detail ? `${j.error} (${j.detail})` : (j.error || "Erreur"));
+      setPlan(j.plan); setShowGen(false); setReviews("");
+    } catch (e) { setError(e.message); } finally { setLoading(false); }
   }
 
-  const taps = await getTaps(client);
-  const daily = await getDailyTaps(client, 14);
-  const max = Math.max(1, ...daily.map((d) => d.value));
-  const week = daily.slice(-7).reduce((s, d) => s + d.value, 0);
-  const today = daily.length ? daily[daily.length - 1].value : 0;
-  const initial = (c.name || "?").trim().charAt(0).toUpperCase();
-
-  const rev = await getReviews(client);
-  const plan = await getPlan(client);
-  let generated = 0, scansSince = 0, conversion = null;
-  if (rev) {
-    generated = Math.max(0, rev.current - rev.base);
-    scansSince = Math.max(0, taps - rev.tapsAtBase);
-    conversion = scansSince > 0 ? Math.min(100, Math.round((generated / scansSince) * 100)) : null;
+  async function toggle(type, index) {
+    setPlan((prev) => {
+      const p = JSON.parse(JSON.stringify(prev));
+      p[type][index].done = !p[type][index].done;
+      return p;
+    });
+    try {
+      await fetch("/api/plan/toggle", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ client: clientId(), type, index }),
+      });
+    } catch (e) { /* resync au prochain chargement */ }
   }
+
+  const total = plan ? (plan.semaine.length + plan.mois.length) : 0;
+  const done = plan ? (plan.semaine.filter((x) => x.done).length + plan.mois.filter((x) => x.done).length) : 0;
+  const pct = total ? Math.round((done / total) * 100) : 0;
+  const dotClass = (n) => (["rouge", "orange", "vert"].includes(n) ? n : "orange");
 
   return (
-    <>
-      <div className="hero">
-        <div className="hero-inner hero-brand">
-          <div className="brand-logo">
-            {c.logoUrl
-              ? <img src={c.logoUrl} alt={c.name} />
-              : <span className="brand-mono">{initial}</span>}
-          </div>
-          <div className="brand-text">
-            <div className="eyebrow"><span className="dot"></span>AvisBoost · Tableau de bord</div>
-            <h1 className="hero-title">{c.name}</h1>
-            {c.address
-              ? <p className="hero-addr">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                  {c.address}
-                </p>
-              : <p className="hero-sub">Le suivi de vos avis Google, en direct.</p>}
-          </div>
-        </div>
-      </div>
-
-      <div className="container pull-up">
-        <div className="card stat-card reveal hoverable" style={{ animationDelay: "0ms" }}>
-          <div className="stat-top">
-            <span className="stat-num"><CountUp value={taps} /></span>
-            <span className="stat-label">scans de votre carte au total</span>
-          </div>
-          <div className="stat-chips">
-            <div className="chip gold">
-              <span className="n">{today}</span>
-              <span className="l">aujourd'hui</span>
-            </div>
-            <div className="chip">
-              <span className="n">{week}</span>
-              <span className="l">7 derniers jours</span>
-            </div>
-          </div>
-        </div>
-
-        <div className="card reveal hoverable" style={{ animationDelay: "70ms" }}>
-          <div className="card-head">
-            <div>
-              <h2 className="card-title">Performance de la carte</h2>
-              <p className="card-hint">Combien de vos scans se transforment en avis</p>
-            </div>
-            <span className="tag">Conversion</span>
+    <div>
+      {plan && (
+        <>
+          <div className="progress-row">
+            <div className="progress-track"><div className="progress-fill" style={{ width: `${pct}%` }}></div></div>
+            <span className="progress-label">{done}/{total} fait</span>
           </div>
 
-          {rev ? (
-            <>
-              <div className="stat-top">
-                <span className="stat-num" style={{ fontSize: "clamp(40px,11vw,68px)" }}>
-                  {conversion != null ? `${conversion}%` : "—"}
-                </span>
-                <span className="stat-label">de vos scans deviennent des avis</span>
-              </div>
-              <div className="stat-chips">
-                <div className="chip"><span className="n">{scansSince}</span><span className="l">scans suivis</span></div>
-                <div className="chip gold"><span className="n">+{generated}</span><span className="l">avis générés</span></div>
-                <div className="chip"><span className="n">{rev.current}</span><span className="l">avis Google au total</span></div>
-              </div>
-            </>
-          ) : (
-            <p className="footnote">Renseignez votre nombre d'avis Google actuel ci-dessous pour activer le suivi de conversion.</p>
-          )}
+          {plan.focus && <div className="focus-box" style={{ marginTop: 14 }}><b>Priorité n°1 :</b> {plan.focus}</div>}
 
-          <ReviewUpdate current={rev ? rev.current : ""} />
-        </div>
-
-        <div className="card reveal hoverable" style={{ animationDelay: "140ms" }}>
-          <div className="card-head">
-            <div>
-              <h2 className="card-title">Activité</h2>
-              <p className="card-hint">Scans par jour sur les 14 derniers jours</p>
-            </div>
-            <span className="tag">14 j</span>
-          </div>
-          <div className="chart">
-            <div className="chart-bars">
-              {daily.map((d, i) => (
-                <div key={d.label} className={"bar" + (i === daily.length - 1 ? " today" : "")}>
-                  <span className="bar-val">{d.value}</span>
-                  <div className="bar-fill" style={{ height: `${(d.value / max) * 100}%`, animationDelay: `${i * 35}ms` }}></div>
-                  <span className="bar-label">{d.label}</span>
-                </div>
+          {plan.semaine.length > 0 && (
+            <div className="asec" style={{ marginTop: 18 }}>
+              <div className="asec-head"><span className="adot axe"></span>Cette semaine</div>
+              {plan.semaine.map((a, i) => (
+                <button type="button" className={"task" + (a.done ? " done" : "")} key={i} onClick={() => toggle("semaine", i)}>
+                  <span className="check">{a.done ? "✓" : ""}</span>
+                  <span className={"prio-dot " + dotClass(a.niveau)} style={{ marginTop: 8 }}></span>
+                  <span className="task-main">
+                    <span className="task-action">{a.action}</span>
+                    {a.pourquoi && <span className="task-why">{a.pourquoi}</span>}
+                  </span>
+                </button>
               ))}
             </div>
-            <p className="chart-foot">Chaque scan correspond à un client dirigé vers votre page d'avis Google.</p>
-          </div>
-        </div>
+          )}
 
-        <div className="card reveal hoverable" style={{ animationDelay: "210ms" }}>
-          <div className="card-head">
-            <div>
-              <h2 className="card-title">Analyse des avis</h2>
-              <p className="card-hint">Les thèmes qui reviennent et vos axes d'amélioration</p>
+          {plan.mois.length > 0 && (
+            <div className="asec" style={{ marginTop: 14 }}>
+              <div className="asec-head"><span className="adot pos"></span>Ce mois-ci</div>
+              {plan.mois.map((m, i) => (
+                <button type="button" className={"task" + (m.done ? " done" : "")} key={i} onClick={() => toggle("mois", i)}>
+                  <span className="check">{m.done ? "✓" : ""}</span>
+                  <span className="task-main"><span className="task-action">{m.text}</span></span>
+                </button>
+              ))}
             </div>
-            <span className="tag">Assistant IA</span>
-          </div>
-          <Analyzer businessName={c.name} />
-        </div>
+          )}
 
-        <div className="card reveal hoverable" style={{ animationDelay: "280ms" }}>
-          <div className="card-head">
-            <div>
-              <h2 className="card-title">Plan d'action</h2>
-              <p className="card-hint">Vos priorités concrètes, basées sur vos avis et vos chiffres</p>
-            </div>
-            <span className="tag">Assistant IA</span>
-          </div>
-          <Plan initialPlan={plan} />
-        </div>
+          <button className="btn btn-ghost btn-block" style={{ marginTop: 16 }} onClick={() => setShowGen((v) => !v)}>
+            {showGen ? "Annuler" : "Générer un nouveau plan"}
+          </button>
+        </>
+      )}
 
-        <div className="card reveal hoverable" style={{ animationDelay: "350ms" }}>
-          <div className="card-head">
-            <div>
-              <h2 className="card-title">Répondre à un avis</h2>
-              <p className="card-hint">Collez l'avis reçu, validez la réponse proposée.</p>
-            </div>
-            <span className="tag">Assistant IA</span>
+      {showGen && (
+        <div style={{ marginTop: plan ? 14 : 0 }}>
+          <div className="field">
+            <label className="label">Vos avis récents (facultatif mais conseillé)</label>
+            <textarea className="textarea" value={reviews} onChange={(e) => setReviews(e.target.value)}
+              placeholder="Collez quelques avis récents pour un plan plus précis…" />
+            <p className="footnote">Le plan tient déjà compte de vos scans et de votre taux de conversion.</p>
           </div>
-          <Responder businessName={c.name} defaultTone={c.tone || ""} />
+          <button className="btn btn-primary btn-block btn-icon" onClick={generate} disabled={loading}>
+            {loading ? "Génération…" : (
+              <>
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+                </svg>
+                {plan ? "Remplacer le plan" : "Générer mon plan d'action"}
+              </>
+            )}
+          </button>
         </div>
+      )}
 
-        <div className="card reveal hoverable" style={{ animationDelay: "420ms" }}>
-          <div className="card-head">
-            <div>
-              <h2 className="card-title">Créer un visuel à partir d'un avis</h2>
-              <p className="card-hint">Une image prête à poster (Insta, Facebook, story) + les légendes</p>
-            </div>
-            <span className="tag">Studio</span>
-          </div>
-          <PostVisual businessName={c.name} />
-        </div>
-
-        <p style={{ textAlign: "center", marginTop: 8 }}>
-          <a href={`/api/auth/logout?client=${client}`} className="pill">Se déconnecter</a>
-        </p>
-      </div>
-    </>
+      {error && <p className="err">{error}</p>}
+    </div>
   );
 }
