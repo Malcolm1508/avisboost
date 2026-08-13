@@ -1,5 +1,5 @@
 import { cookies } from "next/headers";
-import { getClient, getTaps, getDailyTaps, getReviews, getPlan } from "@/lib/db";
+import { getClient, getTaps, getDailyTaps, getReviews, getPlan, getDailyRange } from "@/lib/db";
 import { verifySession, cookieName } from "@/lib/auth";
 import Responder from "./Responder";
 import Analyzer from "./Analyzer";
@@ -8,6 +8,7 @@ import CountUp from "./CountUp";
 import ReviewUpdate from "./ReviewUpdate";
 import Plan from "./Plan";
 import PostVisual from "./PostVisual";
+import Activity from "./Activity";
 
 export const dynamic = "force-dynamic";
 
@@ -33,13 +34,13 @@ export default async function Dashboard({ params }) {
 
   const taps = await getTaps(client);
   const daily = await getDailyTaps(client, 14);
-  const max = Math.max(1, ...daily.map((d) => d.value));
   const week = daily.slice(-7).reduce((s, d) => s + d.value, 0);
   const today = daily.length ? daily[daily.length - 1].value : 0;
   const initial = (c.name || "?").trim().charAt(0).toUpperCase();
 
   const rev = await getReviews(client);
   const plan = await getPlan(client);
+  const history = await getDailyRange(client, 365);
   let generated = 0, scansSince = 0, conversion = null;
   if (rev) {
     generated = Math.max(0, rev.current - rev.base);
@@ -121,22 +122,10 @@ export default async function Dashboard({ params }) {
           <div className="card-head">
             <div>
               <h2 className="card-title">Activité</h2>
-              <p className="card-hint">Scans par jour sur les 14 derniers jours</p>
+              <p className="card-hint">Vos scans dans le temps</p>
             </div>
-            <span className="tag">14 j</span>
           </div>
-          <div className="chart">
-            <div className="chart-bars">
-              {daily.map((d, i) => (
-                <div key={d.label} className={"bar" + (i === daily.length - 1 ? " today" : "")}>
-                  <span className="bar-val">{d.value}</span>
-                  <div className="bar-fill" style={{ height: `${(d.value / max) * 100}%`, animationDelay: `${i * 35}ms` }}></div>
-                  <span className="bar-label">{d.label}</span>
-                </div>
-              ))}
-            </div>
-            <p className="chart-foot">Chaque scan correspond à un client dirigé vers votre page d'avis Google.</p>
-          </div>
+          <Activity data={history} />
         </div>
 
         <div className="card reveal hoverable" style={{ animationDelay: "210ms" }}>
