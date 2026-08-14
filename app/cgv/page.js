@@ -10,11 +10,13 @@ export default function CGV() {
 
       <div className="container pull-up">
         <div className="card reveal" style={{ maxWidth: 760, margin: "0 auto", lineHeight: 1.7 }}>
-          <h2 className="card-title">1. Objet</h2>
+        <h2 className="card-title">1. Objet</h2>
           <p>
-            Les présentes conditions régissent la vente, par BoostRepu (À COMPLÉTER — SIRET), à des clients
-            professionnels, d'une carte NFC et d'un abonnement à un service logiciel en ligne de suivi et de gestion
-            de la réputation Google.
+            Les présentes conditions régissent la vente, par <b>MMAxis</b> (entreprise individuelle,
+            SIRET À COMPLÉTER), à des clients professionnels, d'une carte NFC et d'un abonnement au
+            service logiciel <b>BoostRepu</b>, solution en ligne de collecte, de suivi et de gestion
+            de la réputation Google. BoostRepu est une marque commerciale exploitée par MMAxis ;
+            l'ensemble des relations contractuelles et de la facturation relève de MMAxis.
           </p>
 
           <h2 className="card-title" style={{ marginTop: 24 }}>2. Prestations</h2>
