@@ -10,9 +10,10 @@ export default function MentionsLegales() {
 
       <div className="container pull-up">
         <div className="card reveal" style={{ maxWidth: 760, margin: "0 auto", lineHeight: 1.7 }}>
-          <h2 className="card-title">Éditeur du site</h2>
+         <h2 className="card-title">Éditeur du site</h2>
           <p>
-            BoostRepu — entreprise individuelle (micro-entreprise)<br />
+            <b>MMAxis</b> — entreprise individuelle (micro-entreprise)<br />
+            BoostRepu est une marque commerciale exploitée par MMAxis.<br />
             Responsable de la publication : À COMPLÉTER (prénom et nom)<br />
             Adresse : À COMPLÉTER<br />
             SIRET : À COMPLÉTER<br />
