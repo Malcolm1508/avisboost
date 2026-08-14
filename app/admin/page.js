@@ -39,7 +39,7 @@ export default function Admin() {
   return (
     <>
       <div className="hero"><div className="hero-inner">
-       <div className="eyebrow"><span className="dot"></span>AvisBoost · Admin</div>
+      <div className="eyebrow"><span className="dot"></span>BoostRepu · Admin</div>
         <h1 className="hero-title">Nouveau client</h1>
         <p className="hero-sub">Remplis, clique, et tout est prêt : les liens et l'accès du commerçant.</p>
       </div></div>
