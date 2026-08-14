@@ -18,7 +18,7 @@ export default function RootLayout({ children }) {
               <a href="/cgv">CGV</a>
               <a href="/confidentialite">Confidentialité</a>
             </nav>
-            <span className="site-footer-copy">© {new Date().getFullYear()} BoostRepu</span>
+            <span className="site-footer-copy">© {new Date().getFullYear()} BoostRepu — une marque MMAxis</span>
           </div>
         </footer>
       </body>
