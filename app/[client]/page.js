@@ -1,6 +1,7 @@
 import { cookies } from "next/headers";
 import { getClient, getTaps, getDailyTaps, getReviews, getPlan, getDailyRange } from "@/lib/db";
 import { verifySession, cookieName } from "@/lib/auth";
+import Shell from "./Shell";
 import Responder from "./Responder";
 import Analyzer from "./Analyzer";
 import Login from "./Login";
@@ -28,19 +29,17 @@ export default async function Dashboard({ params }) {
 
   const jar = await cookies();
   const token = jar.get(cookieName(client))?.value;
-  if (!verifySession(token, client)) {
-    return <Login client={client} name={c.name} />;
-  }
+  if (!verifySession(token, client)) return <Login client={client} name={c.name} />;
 
   const taps = await getTaps(client);
   const daily = await getDailyTaps(client, 14);
   const week = daily.slice(-7).reduce((s, d) => s + d.value, 0);
   const today = daily.length ? daily[daily.length - 1].value : 0;
-  const initial = (c.name || "?").trim().charAt(0).toUpperCase();
 
   const rev = await getReviews(client);
   const plan = await getPlan(client);
   const history = await getDailyRange(client, 365);
+
   let generated = 0, scansSince = 0, conversion = null;
   if (rev) {
     generated = Math.max(0, rev.current - rev.base);
@@ -48,95 +47,121 @@ export default async function Dashboard({ params }) {
     conversion = scansSince > 0 ? Math.min(100, Math.round((generated / scansSince) * 100)) : null;
   }
 
+  const I = { fill: "none", stroke: "currentColor", strokeWidth: 2, strokeLinecap: "round", strokeLinejoin: "round" };
+
   return (
-    <>
-      <div className="hero">
-        <div className="hero-inner hero-brand">
-          <div className="brand-logo">
-            {c.logoUrl
-              ? <img src={c.logoUrl} alt={c.name} />
-              : <span className="brand-mono">{initial}</span>}
+    <Shell clientId={client} name={c.name} address={c.address} logoUrl={c.logoUrl} isDemo={client === "demo"}>
+      <div className="container pull-up">
+
+        {/* Bandeau des 3 indicateurs */}
+        <div className="stat-strip reveal" id="tableau">
+          <div className="strip-item">
+            <div className="strip-icon violet">
+              <svg viewBox="0 0 24 24"><path d="M3 12h3l2-6 4 12 3-9 2 3h4" {...I} /></svg>
+            </div>
+            <div>
+              <div className="strip-n"><CountUp value={taps} /></div>
+              <div className="strip-l">Scans de votre carte</div>
+            </div>
           </div>
-          <div className="brand-text">
-            <div className="eyebrow"><span className="dot"></span>BoostRepu · Tableau de bord</div>
-            <h1 className="hero-title">{c.name}</h1>
-            {c.address
-              ? <p className="hero-addr">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                  {c.address}
-                </p>
-              : <p className="hero-sub">Le suivi de vos avis Google, en direct.</p>}
+          <div className="strip-item">
+            <div className="strip-icon vert">
+              <svg viewBox="0 0 24 24"><path d="m12 3.5 2.6 5.4 5.9.8-4.3 4.1 1.1 5.9L12 17l-5.3 2.7 1.1-5.9-4.3-4.1 5.9-.8z" {...I} /></svg>
+            </div>
+            <div>
+              <div className="strip-n">{rev ? `+${generated}` : "—"}</div>
+              <div className="strip-l">Avis générés</div>
+            </div>
+          </div>
+          <div className="strip-item">
+            <div className="strip-icon or">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" {...I} /><path d="M12 7v5l3.5 2" {...I} /></svg>
+            </div>
+            <div>
+              <div className="strip-n">{conversion != null ? `${conversion}%` : "—"}</div>
+              <div className="strip-l">Taux de conversion</div>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div className="container pull-up">
-        <div className="card stat-card reveal hoverable" style={{ animationDelay: "0ms" }}>
+        {/* Compteur principal */}
+        <div className="card stat-card reveal">
           <div className="stat-top">
             <span className="stat-num"><CountUp value={taps} /></span>
             <span className="stat-label">scans de votre carte au total</span>
           </div>
           <div className="stat-chips">
-            <div className="chip gold">
-              <span className="n">{today}</span>
-              <span className="l">aujourd'hui</span>
-            </div>
-            <div className="chip">
-              <span className="n">{week}</span>
-              <span className="l">7 derniers jours</span>
-            </div>
+            <div className="chip gold"><span className="n">{today}</span><span className="l">aujourd'hui</span></div>
+            <div className="chip"><span className="n">{week}</span><span className="l">7 derniers jours</span></div>
           </div>
           {taps === 0 && (
-            <p className="footnote" style={{ marginTop: 14 }}>
+            <p className="footnote">
               Votre carte est prête. Posez-la à côté de votre caisse : les premiers scans apparaîtront ici.
             </p>
           )}
         </div>
 
-        <div className="card reveal hoverable" style={{ animationDelay: "70ms" }}>
-          <div className="card-head">
-            <div>
-              <h2 className="card-title">Performance de la carte</h2>
-              <p className="card-hint">Combien de vos scans se transforment en avis</p>
+        <div className="grid cols-2">
+
+          {/* Conversion */}
+          <div className="card reveal" id="conversion">
+            <div className="card-head">
+              <div>
+                <h2 className="card-title">Performance de votre carte</h2>
+                <p className="card-hint">Combien de vos scans se transforment en avis</p>
+              </div>
+              <span className="tag">Conversion</span>
             </div>
-            <span className="tag">Conversion</span>
+
+            {rev ? (
+              <div className="donut-row">
+                <div className="donut" style={{ "--pct": conversion ?? 0 }}>
+                  <div className="donut-in">
+                    <div className="donut-n">{conversion != null ? `${conversion}%` : "—"}</div>
+                    <div className="donut-l">de vos scans<br />deviennent des avis</div>
+                  </div>
+                </div>
+                <div className="donut-side">
+                  <div className="metric">
+                    <div className="metric-icon"><svg viewBox="0 0 24 24"><path d="M3 12h3l2-6 4 12 3-9 2 3h4" {...I} /></svg></div>
+                    <div><div className="metric-n">{scansSince}</div><div className="metric-l">Scans suivis</div></div>
+                  </div>
+                  <div className="metric">
+                    <div className="metric-icon vert"><svg viewBox="0 0 24 24"><path d="m12 3.5 2.6 5.4 5.9.8-4.3 4.1 1.1 5.9L12 17l-5.3 2.7 1.1-5.9-4.3-4.1 5.9-.8z" {...I} /></svg></div>
+                    <div><div className="metric-n">+{generated}</div><div className="metric-l">Avis générés</div></div>
+                  </div>
+                  <div className="metric">
+                    <div className="metric-icon or"><svg viewBox="0 0 24 24"><path d="m12 3.5 2.6 5.4 5.9.8-4.3 4.1 1.1 5.9L12 17l-5.3 2.7 1.1-5.9-4.3-4.1 5.9-.8z" {...I} /></svg></div>
+                    <div><div className="metric-n">{rev.current}</div><div className="metric-l">Avis Google au total</div></div>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <p className="empty-state">
+                Renseignez votre nombre d'avis Google actuel ci-dessous pour activer le suivi de conversion.
+              </p>
+            )}
+
+            <ReviewUpdate current={rev ? rev.current : ""} />
           </div>
 
-          {rev ? (
-            <>
-              <div className="stat-top">
-                <span className="stat-num" style={{ fontSize: "clamp(40px,11vw,68px)" }}>
-                  {conversion != null ? `${conversion}%` : "—"}
-                </span>
-                <span className="stat-label">de vos scans deviennent des avis</span>
+          {/* Activité */}
+          <div className="card reveal" id="activite">
+            <div className="card-head">
+              <div>
+                <h2 className="card-title">Activité</h2>
+                <p className="card-hint">Vos scans dans le temps</p>
               </div>
-              <div className="stat-chips">
-                <div className="chip"><span className="n">{scansSince}</span><span className="l">scans suivis</span></div>
-                <div className="chip gold"><span className="n">+{generated}</span><span className="l">avis générés</span></div>
-                <div className="chip"><span className="n">{rev.current}</span><span className="l">avis Google au total</span></div>
-              </div>
-            </>
-          ) : (
-            <p className="footnote">Renseignez votre nombre d'avis Google actuel ci-dessous pour activer le suivi de conversion.</p>
-          )}
-
-          <ReviewUpdate current={rev ? rev.current : ""} />
-        </div>
-
-        <div className="card reveal hoverable" style={{ animationDelay: "140ms" }}>
-          <div className="card-head">
-            <div>
-              <h2 className="card-title">Activité</h2>
-              <p className="card-hint">Vos scans dans le temps</p>
             </div>
+            <Activity data={history} />
           </div>
-          <Activity data={history} />
         </div>
 
-        <div className="card reveal hoverable" style={{ animationDelay: "210ms" }}>
+        {/* Analyse */}
+        <div className="card reveal" id="analyse">
           <div className="card-head">
             <div>
-              <h2 className="card-title">Analyse des avis</h2>
+              <h2 className="card-title">Analyse &amp; Insights</h2>
               <p className="card-hint">Les thèmes qui reviennent et vos axes d'amélioration</p>
             </div>
             <span className="tag">Assistant IA</span>
@@ -144,7 +169,8 @@ export default async function Dashboard({ params }) {
           <Analyzer businessName={c.name} />
         </div>
 
-        <div className="card reveal hoverable" style={{ animationDelay: "280ms" }}>
+        {/* Plan */}
+        <div className="card reveal" id="plan">
           <div className="card-head">
             <div>
               <h2 className="card-title">Plan d'action</h2>
@@ -155,7 +181,8 @@ export default async function Dashboard({ params }) {
           <Plan initialPlan={plan} />
         </div>
 
-        <div className="card reveal hoverable" style={{ animationDelay: "350ms" }}>
+        {/* Réponses */}
+        <div className="card reveal" id="repondre">
           <div className="card-head">
             <div>
               <h2 className="card-title">Répondre à un avis</h2>
@@ -166,7 +193,8 @@ export default async function Dashboard({ params }) {
           <Responder businessName={c.name} defaultTone={c.tone || ""} />
         </div>
 
-        <div className="card reveal hoverable" style={{ animationDelay: "420ms" }}>
+        {/* Studio */}
+        <div className="card reveal" id="visuel">
           <div className="card-head">
             <div>
               <h2 className="card-title">Créer un visuel à partir d'un avis</h2>
@@ -177,10 +205,7 @@ export default async function Dashboard({ params }) {
           <PostVisual businessName={c.name} />
         </div>
 
-        <p style={{ textAlign: "center", marginTop: 8 }}>
-          <a href={`/api/auth/logout?client=${client}`} className="pill">Se déconnecter</a>
-        </p>
       </div>
-    </>
+    </Shell>
   );
 }
