@@ -26,11 +26,10 @@ export default function ResetScans() {
   return (
     <>
       <div className="hero"><div className="hero-inner">
-        <div className="eyebrow"><span className="dot"></span>AvisBoost · Admin</div>
+        <div className="eyebrow"><span className="dot"></span>BoostRepu · Admin</div>
         <h1 className="hero-title">Réinitialiser les scans</h1>
         <p className="hero-sub">Remet le compteur d'un client à zéro (total + historique). Idéal après une phase de test.</p>
       </div></div>
-
       <div className="container pull-up">
         <div className="card reveal" style={{ maxWidth: 480, margin: "0 auto" }}>
           <div className="field">
