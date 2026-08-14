@@ -202,7 +202,7 @@ export default async function Dashboard({ params }) {
             </div>
             <span className="tag">Studio</span>
           </div>
-          <PostVisual businessName={c.name} />
+          <PostVisual businessName={c.name} logoUrl={c.logoUrl} />
         </div>
 
       </div>
