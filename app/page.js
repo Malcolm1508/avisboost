@@ -1,14 +1,28 @@
 export default function Home() {
   return (
-    <main className="wrap">
-      <h1>AvisBoost</h1>
-      <p className="sub">Le back-office de tes cartes NFC.</p>
-      <div className="card">
-        <p>Deux espaces :</p>
-        <p><b>/admin</b> — pour créer un nouveau client en 20 secondes.</p>
-        <p><b>/&lt;id-du-client&gt;</b> — le tableau de bord que tu donnes au commerçant.</p>
-        <p style={{ marginTop: 16 }}><a href="/admin">→ Aller à l'espace admin</a></p>
+    <>
+      <div className="hero"><div className="hero-inner">
+        <div className="eyebrow"><span className="dot"></span>BoostRepu</div>
+        <h1 className="hero-title">BoostRepu</h1>
+        <p className="hero-sub">
+          Le système pour obtenir, comprendre et exploiter vos avis Google.
+        </p>
+      </div></div>
+
+      <div className="container pull-up">
+        <div className="card reveal" style={{ maxWidth: 560, margin: "0 auto" }}>
+          <h2 className="card-title" style={{ marginBottom: 14 }}>Espace de gestion</h2>
+          <p className="card-hint" style={{ marginBottom: 18 }}>
+            Vous êtes commerçant ? Utilisez l'adresse personnelle qui vous a été remise lors de l'installation.
+          </p>
+          <a href="/admin" className="btn btn-primary btn-icon" style={{ display: "inline-flex", textDecoration: "none" }}>
+            Accéder à l'espace admin
+          </a>
+          <p className="footnote" style={{ marginTop: 20 }}>
+            BoostRepu est une marque exploitée par MMAxis.
+          </p>
+        </div>
       </div>
-    </main>
+    </>
   );
 }
