@@ -267,20 +267,22 @@ export default function PostVisual({ businessName, logoUrl }) {
     ctx.fillStyle = "#202124";
     ctx.font = `600 ${format === "story" ? 42 : 36}px "Inter", Arial, sans-serif`;
     ctx.fillText(author.trim() || "Client Google", avX + avR + 28, avY - 6);
-    ctx.fillStyle = "#70757a";
+ctx.fillStyle = "#70757a";
     ctx.font = `400 ${format === "story" ? 30 : 26}px "Inter", Arial, sans-serif`;
-    ctx.fillText("il y a quelques jours", avX + avR + 28, avY + (format === "story" ? 40 : 34));
+    ctx.fillText("récemment", avX + avR + 28, avY + (format === "story" ? 40 : 34));
 
-    // étoiles Google (jaune fixe)
+   // étoiles Google (jaune fixe), dessinées une par une pour un espacement net
     const starY = cardY + headH - (format === "story" ? 6 : 4);
-    const sSize = format === "story" ? 46 : 40;
-    ctx.font = `${sSize}px "Inter", Arial, sans-serif`;
-    ctx.fillStyle = "#fbbc04";
+    const sSize = format === "story" ? 44 : 38;
+    const gap = sSize * 1.18;
+    ctx.textAlign = "left";
+    ctx.textBaseline = "alphabetic";
+    ctx.font = `${sSize}px Arial, sans-serif`;
     const n = nStars();
-    ctx.fillText("\u2605".repeat(n), cardX + pad, starY);
-    ctx.fillStyle = "#dadce0";
-    const wOne = ctx.measureText("\u2605").width;
-    ctx.fillText("\u2605".repeat(5 - n), cardX + pad + wOne * n, starY);
+    for (let i = 0; i < 5; i++) {
+      ctx.fillStyle = i < n ? "#fbbc04" : "#dadce0";
+      ctx.fillText("\u2605", cardX + pad + i * gap, starY);
+    }
 
     // logo "G" Google (petit, en haut à droite de la carte)
     ctx.textAlign = "right";
@@ -342,17 +344,24 @@ export default function PostVisual({ businessName, logoUrl }) {
     drawFooter(ctx, F, T, "left");
   }
 
-  /* ---------- pied commun ---------- */
+/* ---------- pied commun ---------- */
   function drawFooter(ctx, F, T, align = "center") {
     const W = F.w, H = F.h, P = format === "story" ? 120 : 96;
     const x = align === "left" ? P : W / 2;
+    const maxW = W - 2 * P;
     ctx.textAlign = align;
     ctx.font = `600 ${format === "story" ? 32 : 27}px "Inter", Arial, sans-serif`;
     ctx.fillStyle = T.tag;
     ctx.fillText(footTag, x, H - P - (format === "story" ? 66 : 56));
-    ctx.font = `700 ${format === "story" ? 62 : 52}px "Plus Jakarta Sans", Georgia, serif`;
+
+    const name = businessName || "Votre établissement";
+    let ns = format === "story" ? 62 : 52;
+    for (; ns >= 30; ns -= 2) {
+      ctx.font = `700 ${ns}px "Plus Jakarta Sans", Georgia, serif`;
+      if (ctx.measureText(name).width <= maxW) break;
+    }
     ctx.fillStyle = T.name;
-    ctx.fillText(businessName || "Votre établissement", x, H - P - (format === "story" ? 8 : 6));
+    ctx.fillText(name, x, H - P - (format === "story" ? 8 : 6));
   }
 
   function download() {
