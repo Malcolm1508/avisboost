@@ -1,6 +1,8 @@
-// ⬇️ REMPLACE ces 2 valeurs par tes vraies coordonnées
-const CONTACT_EMAIL = "ton-email@exemple.com";
-const CONTACT_TEL = "+33600000000";
+"use client";
+import { useState } from "react";
+
+const CONTACT_EMAIL = "contact@boostrepu.fr";
+const CONTACT_TEL = "07 77 76 07 72";
 
 function Logo({ size = 30 }) {
   return (
@@ -34,6 +36,8 @@ function Sparkle() {
 export default function Home() {
   const mail = `mailto:${CONTACT_EMAIL}?subject=Demande%20d'information%20BoostRepu`;
   const tel = `tel:${CONTACT_TEL}`;
+  const [contactOpen, setContactOpen] = useState(false);
+  const openContact = () => setContactOpen(true);
   const bars = [34, 48, 40, 62, 55, 72, 90, 68, 84, 100, 76, 94];
 
   return (
@@ -54,7 +58,7 @@ export default function Home() {
             <a className="lp-navlink" href="#outil">L'outil</a>
             <a className="lp-navlink" href="#tarifs">Tarifs</a>
             <a className="lp-navlink" href="#faq">FAQ</a>
-            <a href={mail} className="lp-btn lp-btn-primary" style={{ padding: "9px 18px", fontSize: 14 }}>Nous contacter</a>
+            <button onClick={openContact} className="lp-btn lp-btn-primary" style={{ padding: "9px 18px", fontSize: 14 }}>Nous contacter</button>
           </div>
         </div>
       </nav>
@@ -65,11 +69,11 @@ export default function Home() {
         <span className="lp-orb lp-orb-2" />
         <div className="lp-hero-inner">
           <div>
-            <span className="lp-ai-pill"><Sparkle /> Propulsé par l'intelligence artificielle</span>
+            <span className="lp-ai-pill"><Sparkle /> La carte + le tableau de bord · fait à Nancy</span>
             <h1 className="lp-h1">Transformez chaque client satisfait en <span className="lp-grad">avis Google</span>.</h1>
             <p className="lp-lead">Une carte à poser sur votre comptoir, un scan de 5 secondes, et un tableau de bord intelligent qui suit vos avis et vous dit quoi améliorer.</p>
             <div className="lp-hero-btns">
-              <a href={mail} className="lp-btn lp-btn-primary">Nous contacter</a>
+              <button onClick={openContact} className="lp-btn lp-btn-primary">Nous contacter</button>
               <a href="#outil" className="lp-btn lp-btn-outline">Découvrir l'outil</a>
             </div>
             <div className="lp-hero-rea">
@@ -80,7 +84,7 @@ export default function Home() {
 
           {/* MOCKUP DASHBOARD */}
           <div className="lp-mock">
-            <div className="lp-mock-bar"><i /><i /><i /><span className="lp-mock-url">boostrepu.app/salon-marie</span></div>
+            <div className="lp-mock-bar"><i /><i /><i /><span className="lp-mock-url">boostrepu.fr/salon-marie</span></div>
             <div className="lp-mock-body">
               <div className="lp-mock-hd">
                 <div className="lp-mock-logo">M</div>
@@ -194,7 +198,7 @@ export default function Home() {
                 <div className="lp-check"><Check /> Prête à l'emploi immédiatement</div>
                 <div className="lp-check"><Check /> Réutilisable à l'infini</div>
               </div>
-              <a href={mail} className="lp-btn lp-btn-ghost lp-btn-block">Nous contacter</a>
+              <button onClick={openContact} className="lp-btn lp-btn-ghost lp-btn-block">Nous contacter</button>
             </div>
             <div className="lp-price-card featured">
               <span className="lp-price-badge"><Sparkle /> Le plus complet</span>
@@ -206,10 +210,41 @@ export default function Home() {
                 <div className="lp-check"><Check /> Réponses et visuels illimités</div>
                 <div className="lp-check"><Check /> Résiliable à tout moment</div>
               </div>
-              <a href={mail} className="lp-btn lp-btn-primary lp-btn-block">Nous contacter</a>
+              <button onClick={openContact} className="lp-btn lp-btn-primary lp-btn-block">Nous contacter</button>
             </div>
           </div>
           <p className="lp-note">Un seul client supplémentaire dans le mois, et votre abonnement est déjà rentabilisé.</p>
+        </section>
+      </div>
+
+      {/* QR CODE VS BOOSTREPU */}
+      <div className="lp-band">
+        <section className="lp-sec">
+          <div className="lp-eyebrow">« J'ai déjà un QR code »</div>
+          <h2 className="lp-h2">Un QR code vous fait espérer des avis. BoostRepu vous prouve que ça marche.</h2>
+          <p className="lp-p">Beaucoup de commerçants ont déjà un QR code qui renvoie vers leur page Google. C'est un bon début — mais il s'arrête là. Il ne compte rien, ne mesure rien, et ne vous aide en rien une fois l'avis passé.</p>
+          <div className="lp-compare">
+            <div className="lp-compare-row lp-compare-head">
+              <span></span><span>QR code simple</span><span className="lp-compare-us">BoostRepu</span>
+            </div>
+            {[
+              ["Renvoie vers votre page Google", true, true],
+              ["Se scanne sans application", true, true],
+              ["Fonctionne aussi en sans-contact (NFC)", false, true],
+              ["Compte combien de fois il est scanné", false, true],
+              ["Mesure combien d'avis ça rapporte vraiment", false, true],
+              ["Rédige vos réponses aux avis", false, true],
+              ["Transforme vos avis en visuels à publier", false, true],
+              ["Vous dit quoi améliorer", false, true],
+            ].map(([label, qr, us], i) => (
+              <div className="lp-compare-row" key={i}>
+                <span>{label}</span>
+                <span>{qr ? <Check /> : <em className="lp-x">—</em>}</span>
+                <span className="lp-compare-us">{us ? <Check /> : <em className="lp-x">—</em>}</span>
+              </div>
+            ))}
+          </div>
+          <p className="lp-note">Et si vous avez déjà un QR code : gardez-le. BoostRepu s'ajoute par-dessus et vous apporte enfin les chiffres qui vous manquaient.</p>
         </section>
       </div>
 
@@ -220,6 +255,7 @@ export default function Home() {
         <div className="lp-faq">
           <details><summary>Est-ce que c'est légal / autorisé par Google ?</summary><p>Oui, totalement. Ce sont vos vrais clients qui laissent un vrai avis — on leur simplifie juste le geste. Aucun faux avis, aucune manipulation : c'est parfaitement conforme aux règles de Google.</p></details>
           <details><summary>Mes clients doivent-ils installer une application ?</summary><p>Non. Ils approchent simplement leur téléphone de la carte, et leur navigateur s'ouvre sur votre page d'avis. Un QR code est aussi présent en secours.</p></details>
+          <details><summary>J'ai déjà un QR code pour mes avis, quelle différence ?</summary><p>Un QR code classique renvoie vers votre page Google, et c'est tout. BoostRepu fait la même chose, mais compte chaque scan, mesure combien d'avis en découlent, rédige vos réponses et vous dit quoi améliorer. Vous pouvez même garder votre QR code : BoostRepu s'ajoute par-dessus.</p></details>
           <details><summary>Ça marche sur tous les téléphones ?</summary><p>Le sans-contact (NFC) fonctionne sur la très grande majorité des smartphones récents. Pour les rares exceptions, le QR code prend le relais.</p></details>
           <details><summary>Y a-t-il un engagement ?</summary><p>Aucun. La carte est un achat unique, et l'abonnement au tableau de bord est résiliable quand vous le souhaitez. Vous êtes aussi couvert par notre garantie satisfait ou remboursé de 14 jours.</p></details>
           <details><summary>Comment se passe l'installation ?</summary><p>On configure votre carte et votre tableau de bord à votre nom. Vous n'avez plus qu'à poser la carte sur votre comptoir. Contactez-nous, on s'occupe de tout.</p></details>
@@ -234,7 +270,7 @@ export default function Home() {
           <div className="lp-eyebrow" style={{ color: "#d6c8ff", justifyContent: "center", position: "relative" }}>On se lance ?</div>
           <h2 className="lp-h2" style={{ color: "#fff", marginTop: 6, position: "relative" }}>Votre réputation mérite mieux que le hasard</h2>
           <p style={{ color: "#cdbcf5", fontSize: 18, maxWidth: "52ch", margin: "10px auto 24px", position: "relative" }}>Équipez votre commerce aujourd'hui et commencez à récolter des avis dès demain. Sans engagement, satisfait ou remboursé.</p>
-          <a href={mail} className="lp-btn lp-btn-light" style={{ position: "relative" }}>Nous contacter</a>
+          <button onClick={openContact} className="lp-btn lp-btn-light" style={{ position: "relative" }}>Nous contacter</button>
         </div>
       </section>
 
@@ -246,12 +282,35 @@ export default function Home() {
             <p style={{ marginTop: 10, maxWidth: "34ch" }}>La carte qui récolte vos avis Google, et le logiciel qui vous dit quoi en faire.</p>
           </div>
           <div className="lp-footer-contact">
-            <p><a href={mail}>{CONTACT_EMAIL}</a></p>
             <p><a href={tel}>{CONTACT_TEL}</a></p>
-            <p style={{ opacity: 0.55, marginTop: 10 }}>© {new Date().getFullYear()} BoostRepu · Entreprise française</p>
+            <p><a href={mail}>{CONTACT_EMAIL}</a></p>
+            <p style={{ marginTop: 10 }}>
+              <a href="/mentions-legales">Mentions légales</a> · <a href="/cgv">CGV</a> · <a href="/confidentialite">Confidentialité</a>
+            </p>
+            <p style={{ opacity: 0.55, marginTop: 10 }}>© {new Date().getFullYear()} BoostRepu · une marque MMAxis</p>
           </div>
         </div>
       </footer>
+
+      {/* BOX CONTACT */}
+      {contactOpen && (
+        <div className="lp-modal-overlay" onClick={() => setContactOpen(false)}>
+          <div className="lp-modal" onClick={(e) => e.stopPropagation()}>
+            <button className="lp-modal-close" onClick={() => setContactOpen(false)} aria-label="Fermer">×</button>
+            <Logo />
+            <h3 className="lp-modal-t">Parlons-en</h3>
+            <p className="lp-modal-p">Appelez ou écrivez-moi, je vous réponds vite et je m'occupe de tout mettre en place.</p>
+            <a href={tel} className="lp-modal-row">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3.1-8.7A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.4-1.2a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg>
+              <span><b>{CONTACT_TEL}</b><small>Appeler</small></span>
+            </a>
+            <a href={mail} className="lp-modal-row">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></svg>
+              <span><b>{CONTACT_EMAIL}</b><small>Envoyer un e-mail</small></span>
+            </a>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
