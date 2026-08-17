@@ -217,37 +217,6 @@ export default function Home() {
         </section>
       </div>
 
-      {/* QR CODE VS BOOSTREPU */}
-      <div className="lp-band">
-        <section className="lp-sec">
-          <div className="lp-eyebrow">« J'ai déjà un QR code »</div>
-          <h2 className="lp-h2">Un QR code vous fait espérer des avis. BoostRepu vous prouve que ça marche.</h2>
-          <p className="lp-p">Beaucoup de commerçants ont déjà un QR code qui renvoie vers leur page Google. C'est un bon début — mais il s'arrête là. Il ne compte rien, ne mesure rien, et ne vous aide en rien une fois l'avis passé.</p>
-          <div className="lp-compare">
-            <div className="lp-compare-row lp-compare-head">
-              <span></span><span>QR code simple</span><span className="lp-compare-us">BoostRepu</span>
-            </div>
-            {[
-              ["Renvoie vers votre page Google", true, true],
-              ["Se scanne sans application", true, true],
-              ["Fonctionne aussi en sans-contact (NFC)", false, true],
-              ["Compte combien de fois il est scanné", false, true],
-              ["Mesure combien d'avis ça rapporte vraiment", false, true],
-              ["Rédige vos réponses aux avis", false, true],
-              ["Transforme vos avis en visuels à publier", false, true],
-              ["Vous dit quoi améliorer", false, true],
-            ].map(([label, qr, us], i) => (
-              <div className="lp-compare-row" key={i}>
-                <span>{label}</span>
-                <span>{qr ? <Check /> : <em className="lp-x">—</em>}</span>
-                <span className="lp-compare-us">{us ? <Check /> : <em className="lp-x">—</em>}</span>
-              </div>
-            ))}
-          </div>
-          <p className="lp-note">Et si vous avez déjà un QR code : gardez-le. BoostRepu s'ajoute par-dessus et vous apporte enfin les chiffres qui vous manquaient.</p>
-        </section>
-      </div>
-
       {/* FAQ */}
       <section className="lp-sec" id="faq">
         <div className="lp-eyebrow" style={{ justifyContent: "center" }}>Questions fréquentes</div>
