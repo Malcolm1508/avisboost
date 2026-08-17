@@ -6,6 +6,12 @@ const FORMATS = {
   story: { w: 1080, h: 1920, label: "Story" },
 };
 
+const STYLES = {
+  guillemet: { label: "Citation (guillemet)" },
+  google: { label: "Avis Google" },
+  magazine: { label: "Magazine" },
+};
+
 const BASE_THEMES = {
   violet: { label: "Violet BoostRepu", bg1: "#1a1038", bg2: "#5b21b6", text: "#ffffff", muted: "#c4b5fd", star: "#fbbf24", name: "#ffffff", tag: "#a78bfa" },
   emeraude: { label: "Émeraude", bg1: "#083b34", bg2: "#0b6b5b", text: "#ffffff", muted: "#a9d8cc", star: "#e2a112", name: "#ffffff", tag: "#8fc7ba" },
@@ -43,10 +49,10 @@ function themeFromHue(h, s) {
     star: hsl(h, clamp(sat + 25, 60, 95), 62),
     name: "#ffffff",
     tag: hsl(h, clamp(sat * 0.7, 18, 50), 68),
+    accent: hsl(h, clamp(sat + 10, 45, 80), 55),
   };
 }
 
-/* Couleur dominante : on ignore le quasi-blanc, le quasi-noir et le gris */
 function dominantColor(img) {
   const S = 64;
   const c = document.createElement("canvas");
@@ -61,8 +67,8 @@ function dominantColor(img) {
     const [r, g, b, a] = [data[i], data[i + 1], data[i + 2], data[i + 3]];
     if (a < 160) continue;
     const [h, s, l] = rgbToHsl(r, g, b);
-    if (l > 92 || l < 8 || s < 16) continue;   // blanc, noir, gris
-    const key = Math.round(h / 12) * 12;        // regroupement par teinte
+    if (l > 92 || l < 8 || s < 16) continue;
+    const key = Math.round(h / 12) * 12;
     const cur = buckets.get(key) || { n: 0, h: 0, s: 0 };
     cur.n++; cur.h += h; cur.s += s;
     buckets.set(key, cur);
@@ -86,12 +92,24 @@ function wrap(ctx, text, maxWidth) {
   return lines;
 }
 
+// dessine un rectangle arrondi (compat tous navigateurs)
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
+}
+
 export default function PostVisual({ businessName, logoUrl }) {
   const canvasRef = useRef(null);
   const [review, setReview] = useState("");
   const [author, setAuthor] = useState("");
   const [rating, setRating] = useState(5);
   const [format, setFormat] = useState("carre");
+  const [style, setStyle] = useState("guillemet");
   const [theme, setTheme] = useState(logoUrl ? "auto" : "violet");
   const [fontsReady, setFontsReady] = useState(false);
 
@@ -109,7 +127,6 @@ export default function PostVisual({ businessName, logoUrl }) {
     } else setFontsReady(true);
   }, []);
 
-  /* Extraction de la couleur du logo */
   useEffect(() => {
     if (!logoUrl) { setLogoState("none"); return; }
     let cancelled = false;
@@ -134,38 +151,45 @@ export default function PostVisual({ businessName, logoUrl }) {
   const activeTheme = (theme === "auto" && autoTheme) ? autoTheme : (BASE_THEMES[theme] || BASE_THEMES.violet);
 
   useEffect(() => { draw(); },
-    [review, author, rating, format, theme, autoTheme, fontsReady, businessName]);
+    [review, author, rating, format, style, theme, autoTheme, fontsReady, businessName]);
 
   function draw() {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const F = FORMATS[format];
-    const T = activeTheme;
     canvas.width = F.w; canvas.height = F.h;
     const ctx = canvas.getContext("2d");
-    const W = F.w, H = F.h;
-    const P = format === "story" ? 130 : 100;
 
-    const grad = ctx.createLinearGradient(0, 0, W, H);
+    // fond commun
+    const T = activeTheme;
+    const grad = ctx.createLinearGradient(0, 0, F.w, F.h);
     grad.addColorStop(0, T.bg1);
     grad.addColorStop(1, T.bg2);
     ctx.fillStyle = grad;
-    ctx.fillRect(0, 0, W, H);
+    ctx.fillRect(0, 0, F.w, F.h);
 
+    if (style === "google") drawGoogle(ctx, F, T);
+    else if (style === "magazine") drawMagazine(ctx, F, T);
+    else drawGuillemet(ctx, F, T);
+  }
+
+  const nStars = () => Math.max(1, Math.min(5, Number(rating) || 5));
+  const footTag = "AVIS CLIENT · GOOGLE";
+
+  /* ---------- STYLE 1 : GUILLEMET (existant) ---------- */
+  function drawGuillemet(ctx, F, T) {
+    const W = F.w, H = F.h, P = format === "story" ? 130 : 100;
     ctx.fillStyle = T.star;
     ctx.globalAlpha = 0.18;
     ctx.font = `700 ${format === "story" ? 320 : 240}px Georgia, serif`;
-    ctx.textAlign = "left";
-    ctx.textBaseline = "alphabetic";
+    ctx.textAlign = "left"; ctx.textBaseline = "alphabetic";
     ctx.fillText("\u201C", P - 10, format === "story" ? 430 : 330);
     ctx.globalAlpha = 1;
 
     ctx.textAlign = "center";
-
-    const starSize = format === "story" ? 78 : 64;
-    ctx.font = `${starSize}px "Inter", Arial, sans-serif`;
+    ctx.font = `${format === "story" ? 78 : 64}px "Inter", Arial, sans-serif`;
     ctx.fillStyle = T.star;
-    const n = Math.max(1, Math.min(5, Number(rating) || 5));
+    const n = nStars();
     ctx.fillText("\u2605".repeat(n) + "\u2606".repeat(5 - n), W / 2, H * (format === "story" ? 0.28 : 0.30));
 
     const txt = review || "Collez un avis pour voir l'aperçu…";
@@ -181,16 +205,12 @@ export default function PostVisual({ businessName, logoUrl }) {
       size = s; lines = ls;
     }
     const maxLines = Math.floor(maxH / lh);
-    if (lines.length > maxLines) {
-      lines = lines.slice(0, maxLines);
-      lines[lines.length - 1] = lines[lines.length - 1].replace(/[.,;:\s]+$/, "") + "\u2026";
-    }
+    if (lines.length > maxLines) { lines = lines.slice(0, maxLines); lines[lines.length - 1] = lines[lines.length - 1].replace(/[.,;:\s]+$/, "") + "\u2026"; }
 
     ctx.font = `600 ${size}px "Inter", Arial, sans-serif`;
     ctx.fillStyle = T.text;
-    const blockH = lines.length * lh;
     const centerY = H * (format === "story" ? 0.50 : 0.52);
-    let y = centerY - blockH / 2 + lh * 0.7;
+    let y = centerY - (lines.length * lh) / 2 + lh * 0.7;
     for (const line of lines) { ctx.fillText(line, W / 2, y); y += lh; }
 
     if (author.trim()) {
@@ -198,13 +218,141 @@ export default function PostVisual({ businessName, logoUrl }) {
       ctx.fillStyle = T.muted;
       ctx.fillText("— " + author.trim(), W / 2, y + (format === "story" ? 40 : 28));
     }
+    drawFooter(ctx, F, T);
+  }
 
+  /* ---------- STYLE 2 : AVIS GOOGLE ---------- */
+  function drawGoogle(ctx, F, T) {
+    const W = F.w, H = F.h;
+    const light = theme === "clair";
+    const P = format === "story" ? 120 : 96;
+    const cardX = P, cardW = W - 2 * P;
+    const cardY = H * (format === "story" ? 0.20 : 0.16);
+    const pad = format === "story" ? 78 : 64;
+
+    // carte blanche
+    const txt = review || "Collez un avis pour voir l'aperçu…";
+    ctx.textAlign = "left";
+    const innerW = cardW - 2 * pad;
+    const bodySize = format === "story" ? 46 : 40;
+    ctx.font = `400 ${bodySize}px "Inter", Arial, sans-serif`;
+    let lines = wrap(ctx, txt, innerW);
+    const maxLines = format === "story" ? 12 : 9;
+    if (lines.length > maxLines) { lines = lines.slice(0, maxLines); lines[lines.length - 1] = lines[lines.length - 1].replace(/[.,;:\s]+$/, "") + "\u2026"; }
+    const lh = bodySize * 1.45;
+    const headH = format === "story" ? 190 : 168;
+    const cardH = headH + lines.length * lh + pad * 1.6;
+
+    ctx.save();
+    ctx.shadowColor = "rgba(0,0,0,.28)";
+    ctx.shadowBlur = 48; ctx.shadowOffsetY = 20;
+    ctx.fillStyle = "#ffffff";
+    roundRect(ctx, cardX, cardY, cardW, cardH, 40);
+    ctx.fill();
+    ctx.restore();
+
+    // pastille initiale
+    const av = (author.trim() || "Client").charAt(0).toUpperCase();
+    const avR = format === "story" ? 46 : 40;
+    const avX = cardX + pad + avR, avY = cardY + pad + avR;
+    ctx.fillStyle = T.bg2;
+    ctx.beginPath(); ctx.arc(avX, avY, avR, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = "#fff";
+    ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    ctx.font = `600 ${avR}px "Plus Jakarta Sans", Arial, sans-serif`;
+    ctx.fillText(av, avX, avY + 2);
+
+    // nom + "il y a peu"
+    ctx.textAlign = "left"; ctx.textBaseline = "alphabetic";
+    ctx.fillStyle = "#202124";
+    ctx.font = `600 ${format === "story" ? 42 : 36}px "Inter", Arial, sans-serif`;
+    ctx.fillText(author.trim() || "Client Google", avX + avR + 28, avY - 6);
+    ctx.fillStyle = "#70757a";
+    ctx.font = `400 ${format === "story" ? 30 : 26}px "Inter", Arial, sans-serif`;
+    ctx.fillText("il y a quelques jours", avX + avR + 28, avY + (format === "story" ? 40 : 34));
+
+    // étoiles Google (jaune fixe)
+    const starY = cardY + headH - (format === "story" ? 6 : 4);
+    const sSize = format === "story" ? 46 : 40;
+    ctx.font = `${sSize}px "Inter", Arial, sans-serif`;
+    ctx.fillStyle = "#fbbc04";
+    const n = nStars();
+    ctx.fillText("\u2605".repeat(n), cardX + pad, starY);
+    ctx.fillStyle = "#dadce0";
+    const wOne = ctx.measureText("\u2605").width;
+    ctx.fillText("\u2605".repeat(5 - n), cardX + pad + wOne * n, starY);
+
+    // logo "G" Google (petit, en haut à droite de la carte)
+    ctx.textAlign = "right";
+    ctx.font = `700 ${format === "story" ? 40 : 34}px "Inter", Arial, sans-serif`;
+    ctx.fillStyle = "#4285F4";
+    ctx.fillText("G", cardX + cardW - pad, cardY + pad + (format === "story" ? 24 : 20));
+
+    // corps de l'avis
+    ctx.textAlign = "left";
+    ctx.fillStyle = "#3c4043";
+    ctx.font = `400 ${bodySize}px "Inter", Arial, sans-serif`;
+    let y = starY + lh * 1.2;
+    for (const line of lines) { ctx.fillText(line, cardX + pad, y); y += lh; }
+
+    drawFooter(ctx, F, T);
+  }
+
+  /* ---------- STYLE 3 : MAGAZINE ---------- */
+  function drawMagazine(ctx, F, T) {
+    const W = F.w, H = F.h, P = format === "story" ? 120 : 96;
+
+    // filet + étoiles en haut
+    ctx.textAlign = "left";
+    ctx.fillStyle = T.star;
+    ctx.font = `${format === "story" ? 60 : 52}px "Inter", Arial, sans-serif`;
+    const n = nStars();
+    ctx.fillText("\u2605".repeat(n) + "\u2606".repeat(5 - n), P, H * (format === "story" ? 0.16 : 0.17));
+
+    // gros texte éditorial, aligné à gauche, qui occupe le visuel
+    const txt = review || "Collez un avis pour voir l'aperçu…";
+    const maxW = W - 2 * P;
+    const maxH = H * (format === "story" ? 0.50 : 0.48);
+    const start = format === "story" ? 108 : 92;
+    let size = start, lines = [], lh = 0;
+    for (let s = start; s >= 44; s -= 2) {
+      ctx.font = `700 ${s}px "Plus Jakarta Sans", Georgia, serif`;
+      const ls = wrap(ctx, txt, maxW);
+      lh = s * 1.18;
+      if (ls.length * lh <= maxH) { size = s; lines = ls; break; }
+      size = s; lines = ls;
+    }
+    const maxLines = Math.floor(maxH / lh);
+    if (lines.length > maxLines) { lines = lines.slice(0, maxLines); lines[lines.length - 1] = lines[lines.length - 1].replace(/[.,;:\s]+$/, "") + "\u2026"; }
+
+    ctx.fillStyle = T.text;
+    ctx.font = `700 ${size}px "Plus Jakarta Sans", Georgia, serif`;
+    let y = H * (format === "story" ? 0.26 : 0.27) + lh * 0.7;
+    for (const line of lines) { ctx.fillText(line, P, y); y += lh; }
+
+    // signature
+    if (author.trim()) {
+      y += format === "story" ? 30 : 20;
+      ctx.fillStyle = T.star;
+      ctx.fillRect(P, y, format === "story" ? 90 : 74, 6);
+      ctx.fillStyle = T.muted;
+      ctx.font = `500 ${format === "story" ? 44 : 38}px "Inter", Arial, sans-serif`;
+      ctx.fillText(author.trim(), P + (format === "story" ? 112 : 92), y + (format === "story" ? 18 : 15));
+    }
+    drawFooter(ctx, F, T, "left");
+  }
+
+  /* ---------- pied commun ---------- */
+  function drawFooter(ctx, F, T, align = "center") {
+    const W = F.w, H = F.h, P = format === "story" ? 120 : 96;
+    const x = align === "left" ? P : W / 2;
+    ctx.textAlign = align;
     ctx.font = `600 ${format === "story" ? 32 : 27}px "Inter", Arial, sans-serif`;
     ctx.fillStyle = T.tag;
-    ctx.fillText("AVIS CLIENT · GOOGLE", W / 2, H - P - (format === "story" ? 78 : 66));
+    ctx.fillText(footTag, x, H - P - (format === "story" ? 66 : 56));
     ctx.font = `700 ${format === "story" ? 62 : 52}px "Plus Jakarta Sans", Georgia, serif`;
     ctx.fillStyle = T.name;
-    ctx.fillText(businessName || "Votre établissement", W / 2, H - P - (format === "story" ? 18 : 14));
+    ctx.fillText(businessName || "Votre établissement", x, H - P - (format === "story" ? 8 : 6));
   }
 
   function download() {
@@ -215,7 +363,7 @@ export default function PostVisual({ businessName, logoUrl }) {
       const a = document.createElement("a");
       const slug = (businessName || "avis").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
       a.href = url;
-      a.download = `avis-${slug}-${format}.png`;
+      a.download = `avis-${slug}-${style}-${format}.png`;
       document.body.appendChild(a); a.click(); a.remove();
       URL.revokeObjectURL(url);
     }, "image/png");
@@ -269,11 +417,20 @@ export default function PostVisual({ businessName, logoUrl }) {
 
       <div className="row2">
         <div style={{ flex: 1, minWidth: 150 }}>
+          <label className="label">Style de visuel</label>
+          <select className="select" value={style} onChange={(e) => setStyle(e.target.value)}>
+            {Object.entries(STYLES).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
+          </select>
+        </div>
+        <div style={{ flex: 1, minWidth: 150 }}>
           <label className="label">Format</label>
           <select className="select" value={format} onChange={(e) => setFormat(e.target.value)}>
             {Object.entries(FORMATS).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
           </select>
         </div>
+      </div>
+
+      <div className="row2">
         <div style={{ flex: 1, minWidth: 150 }}>
           <label className="label">Couleur</label>
           <select className="select" value={theme} onChange={(e) => setTheme(e.target.value)}>
