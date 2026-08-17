@@ -513,3 +513,29 @@ a{color:var(--brand-strong)}
 .lp-footer a{color:#d8cbf3}
 .lp-footer a:hover{color:#fff}
 .lp-footer-contact p{margin:4px 0}
+/* ===== BOX CONTACT (landing) ===== */
+.lp-modal-overlay{position:fixed;inset:0;z-index:200;background:rgba(15,16,36,.6);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;padding:20px;animation:lpfade .18s ease}
+@keyframes lpfade{from{opacity:0}to{opacity:1}}
+.lp-modal{position:relative;background:#fff;border-radius:20px;padding:30px 26px;max-width:400px;width:100%;box-shadow:0 30px 80px -20px rgba(0,0,0,.5);animation:lppop .2s cubic-bezier(.2,.7,.2,1)}
+@keyframes lppop{from{transform:translateY(12px) scale(.98);opacity:0}to{transform:none;opacity:1}}
+.lp-modal-close{position:absolute;top:14px;right:16px;border:0;background:none;font-size:28px;line-height:1;color:#9aa;cursor:pointer}
+.lp-modal-t{font-weight:800;font-size:22px;margin:16px 0 6px;color:#16172a}
+.lp-modal-p{color:#6b6f8c;font-size:15px;margin:0 0 18px}
+.lp-modal-row{display:flex;align-items:center;gap:14px;padding:14px 16px;border:1.5px solid #e8e9f3;border-radius:13px;text-decoration:none;color:#16172a;margin-top:10px;transition:border-color .15s,background .15s}
+.lp-modal-row:hover{border-color:#7c3aed;background:#faf7ff}
+.lp-modal-row svg{color:#7c3aed;flex-shrink:0}
+.lp-modal-row span{display:flex;flex-direction:column}
+.lp-modal-row b{font-size:16px}
+.lp-modal-row small{color:#6b6f8c;font-size:12.5px}
+
+/* ===== COMPARATIF QR ===== */
+.lp-compare{max-width:680px;margin:26px auto 0;border:1px solid #e8e9f3;border-radius:16px;overflow:hidden;background:#fff}
+.lp-compare-row{display:grid;grid-template-columns:1fr 130px 130px;align-items:center;padding:13px 18px;border-top:1px solid #e8e9f3;font-size:14.5px;gap:10px}
+.lp-compare-row:first-child{border-top:0}
+.lp-compare-head{background:#faf7ff;font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:.04em;color:#6b6f8c}
+.lp-compare-head span{text-align:center}
+.lp-compare-head span:first-child{text-align:left}
+.lp-compare-row span:nth-child(2),.lp-compare-row span:nth-child(3){display:flex;justify-content:center;color:#10b981}
+.lp-compare-us{background:#f6f2ff;font-weight:600}
+.lp-compare-row .lp-x{color:#c4c7d4;font-style:normal;font-weight:700}
+@media(max-width:560px){.lp-compare-row{grid-template-columns:1fr 60px 70px;padding:12px;font-size:13px}}
