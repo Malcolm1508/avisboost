@@ -4,6 +4,7 @@ export const metadata = {
   title: "BoostRepu",
   description: "Collecte d'avis Google + assistant IA pour commerçants",
   applicationName: "BoostRepu",
+  manifest: "/api/manifest",
   appleWebApp: {
     capable: true,
     title: "BoostRepu",
