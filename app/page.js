@@ -217,6 +217,25 @@ export default function Home() {
         </section>
       </div>
 
+      {/* SEO LOCAL — contenu géolocalisé */}
+      <div className="lp-band">
+        <section className="lp-sec">
+          <div className="lp-eyebrow">Nancy &amp; Grand Est</div>
+          <h2 className="lp-h2">La carte d'avis Google pensée pour les commerçants de Nancy</h2>
+          <p className="lp-p">
+            BoostRepu accompagne les commerçants, restaurateurs et artisans de Nancy et de son agglomération —
+            Vandœuvre, Laxou, Maxéville, Villers-lès-Nancy, Saint-Max — pour transformer leurs clients satisfaits
+            en avis Google. Notre carte NFC se pose sur le comptoir : le client approche son téléphone, votre page
+            d'avis s'ouvre, et il laisse son évaluation en quelques secondes. Aucune application à installer.
+          </p>
+          <p className="lp-p">
+            Contrairement à une simple carte ou un QR code, BoostRepu mesure combien de fois votre carte est scannée
+            et combien d'avis elle génère réellement. Vous savez enfin si vos efforts pour améliorer vos avis Google
+            portent leurs fruits. Une solution locale, installée et accompagnée sur place dans tout le Grand Est.
+          </p>
+        </section>
+      </div>
+
       {/* FAQ */}
       <section className="lp-sec" id="faq">
         <div className="lp-eyebrow" style={{ justifyContent: "center" }}>Questions fréquentes</div>
