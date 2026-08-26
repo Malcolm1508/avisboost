@@ -58,6 +58,7 @@ export default function Home() {
             <a className="lp-navlink" href="#outil">L'outil</a>
             <a className="lp-navlink" href="#tarifs">Tarifs</a>
             <a className="lp-navlink" href="#faq">FAQ</a>
+                    <a className="lp-navlink" href="/blog">Blog</a>
             <button onClick={openContact} className="lp-btn lp-btn-primary" style={{ padding: "9px 18px", fontSize: 14 }}>Nous contacter</button>
           </div>
         </div>
