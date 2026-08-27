@@ -557,3 +557,13 @@ a{color:var(--brand-strong)}
 .article-p{font-size:16.5px;line-height:1.72;color:#2b2d42;margin:0 0 18px}
 .article-cta{background:#f6f2ff;border:1px solid #e3d9fb;border-radius:16px;padding:26px;margin:34px 0 10px;text-align:center}
 .article-cta p{font-size:16px;font-weight:600;color:#16172a;margin:0}
+/* Lien Blog toujours visible, y compris sur mobile */
+.lp-nav-blog{
+  color:#c9bde9;font-weight:600;font-size:14px;text-decoration:none;
+  padding:8px 14px;border:1px solid rgba(255,255,255,.16);border-radius:999px;
+  transition:color .15s ease,border-color .15s ease;white-space:nowrap;
+}
+.lp-nav-blog:hover{color:#fff;border-color:rgba(255,255,255,.4)}
+@media(max-width:400px){
+  .lp-nav-blog{padding:7px 11px;font-size:13px}
+}
