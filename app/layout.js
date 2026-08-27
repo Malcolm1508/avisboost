@@ -11,7 +11,7 @@ export const metadata = {
   keywords: [
     "carte avis Google", "carte NFC Google", "carte NFC avis", "améliorer ses avis Google",
     "plus d'avis Google", "avis Google commerçant", "carte avis Nancy", "avis Google Nancy",
-    "réputation en ligne Nancy", "carte NFC Grand Est", "obtenir des avis Google",
+    "réputation en ligne Nancy", "carte NFC Grand Est", "obtenir des avis Google", "carte QR code avis Google", "QR code avis Google", "plaque QR code avis",
   ],
   authors: [{ name: "MMAxis" }],
   creator: "MMAxis",
