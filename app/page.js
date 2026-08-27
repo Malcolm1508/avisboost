@@ -72,7 +72,7 @@ export default function Home() {
           <div>
             <span className="lp-ai-pill"><Sparkle /> La carte + le tableau de bord · fait à Nancy</span>
             <h1 className="lp-h1">Transformez chaque client satisfait en <span className="lp-grad">avis Google</span>.</h1>
-            <p className="lp-lead">Une carte à poser sur votre comptoir, un scan de 5 secondes, et un tableau de bord intelligent qui suit vos avis et vous dit quoi améliorer.</p>
+                        <p className="lp-lead">Une carte à poser sur votre comptoir — sans contact (NFC) ou par QR code — un scan de 5 secondes, et un tableau de bord intelligent qui suit vos avis et vous dit quoi améliorer.</p>
             <div className="lp-hero-btns">
               <button onClick={openContact} className="lp-btn lp-btn-primary">Nous contacter</button>
               <a href="#outil" className="lp-btn lp-btn-outline">Découvrir l'outil</a>
@@ -134,7 +134,7 @@ export default function Home() {
           <div className="lp-eyebrow">Comment ça marche</div>
           <h2 className="lp-h2">Un geste. Cinq secondes. Un avis.</h2>
           <div className="lp-grid g3">
-            <div className="lp-card"><div className="lp-step-n">1</div><h3 className="lp-card-t">Le client approche son téléphone</h3><p className="lp-card-p">Pas d'application, rien à installer. Ça marche sur quasiment tous les smartphones.</p></div>
+                        <div className="lp-card"><div className="lp-step-n">1</div><h3 className="lp-card-t">Le client approche son téléphone ou scanne le QR code</h3><p className="lp-card-p">En sans contact (NFC) ou via le QR code imprimé sur la carte. Pas d'application, rien à installer, sur tous les smartphones.</p></div>
             <div className="lp-card"><div className="lp-step-n">2</div><h3 className="lp-card-t">Votre page d'avis Google s'ouvre</h3><p className="lp-card-p">Directement, en une fraction de seconde. Il n'a plus qu'à écrire.</p></div>
             <div className="lp-card"><div className="lp-step-n">3</div><h3 className="lp-card-t">Il met 5 étoiles et publie</h3><p className="lp-card-p">Un avis récent de plus, et un scan compté dans votre tableau de bord.</p></div>
           </div>
@@ -155,6 +155,40 @@ export default function Home() {
           <div className="lp-card"><div className="lp-feat-ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg></div><h3 className="lp-card-t">Visuels prêts à poster</h3><p className="lp-card-p">Transformez un bel avis en image pour Instagram, Facebook ou votre site.</p></div>
         </div>
       </section>
+
+      {/* NFC + QR CODE */}
+      <div className="lp-band">
+        <section className="lp-sec">
+          <div className="lp-eyebrow">Sans contact ou QR code</div>
+          <h2 className="lp-h2">Une carte, deux façons de laisser un avis Google</h2>
+          <p className="lp-p">
+            Chaque carte BoostRepu fonctionne de deux manières, pour que vraiment tous vos clients puissent
+            laisser un avis, quel que soit leur téléphone.
+          </p>
+          <div className="lp-grid g2" style={{ marginTop: 8 }}>
+            <div className="lp-card">
+              <h3 className="lp-card-t">📲 Le sans contact (NFC)</h3>
+              <p className="lp-card-p">
+                Le client approche simplement son téléphone de la carte : votre page d'avis Google s'ouvre
+                instantanément. Aucun geste, aucune application. C'est la méthode la plus rapide, compatible avec
+                la grande majorité des smartphones récents.
+              </p>
+            </div>
+            <div className="lp-card">
+              <h3 className="lp-card-t">📷 Le QR code</h3>
+              <p className="lp-card-p">
+                Un QR code est imprimé sur chaque carte. Pour les téléphones plus anciens ou sans puce NFC, le
+                client l'ouvre avec son appareil photo et accède à la même page d'avis. Personne n'est laissé de
+                côté.
+              </p>
+            </div>
+          </div>
+          <p className="lp-note">
+            NFC et QR code mènent à la même page, et chaque scan est compté dans votre tableau de bord — quelle
+            que soit la méthode utilisée.
+          </p>
+        </section>
+      </div>
 
       {/* OÙ POSER LA CARTE */}
       <div className="lp-band">
@@ -247,6 +281,7 @@ export default function Home() {
           <details><summary>J'ai déjà un QR code pour mes avis, quelle différence ?</summary><p>Un QR code classique renvoie vers votre page Google, et c'est tout. BoostRepu fait la même chose, mais compte chaque scan, mesure combien d'avis en découlent, rédige vos réponses et vous dit quoi améliorer. Vous pouvez même garder votre QR code : BoostRepu s'ajoute par-dessus.</p></details>
           <details><summary>Ça marche sur tous les téléphones ?</summary><p>Le sans-contact (NFC) fonctionne sur la très grande majorité des smartphones récents. Pour les rares exceptions, le QR code prend le relais.</p></details>
           <details><summary>Y a-t-il un engagement ?</summary><p>Aucun. La carte est un achat unique, et l'abonnement au tableau de bord est résiliable quand vous le souhaitez. Vous êtes aussi couvert par notre garantie satisfait ou remboursé de 14 jours.</p></details>
+                  <details><summary>Et si le téléphone de mon client ne lit pas le sans contact ?</summary><p>Aucun problème : chaque carte BoostRepu comporte aussi un QR code. Le client l'ouvre avec son appareil photo et accède à la même page d'avis Google. Entre le sans contact (NFC) et le QR code, tous les téléphones sont couverts.</p></details>
           <details><summary>Comment se passe l'installation ?</summary><p>On configure votre carte et votre tableau de bord à votre nom. Vous n'avez plus qu'à poser la carte sur votre comptoir. Contactez-nous, on s'occupe de tout.</p></details>
           <details><summary>Et mes données ?</summary><p>Vos données restent les vôtres. Nous suivons uniquement les scans de votre carte et les avis que vous choisissez d'analyser. Rien n'est revendu.</p></details>
         </div>
