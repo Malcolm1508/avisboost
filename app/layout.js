@@ -68,6 +68,7 @@ export default function RootLayout({ children }) {
     "@id": "https://boostrepu.fr/#business",
     name: "BoostRepu",
     legalName: "MMAxis",
+        "taxID": "911824753",
     description:
       "Carte NFC et tableau de bord pour aider les commerçants à obtenir et suivre leurs avis Google.",
     url: "https://boostrepu.fr",
