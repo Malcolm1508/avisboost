@@ -12,7 +12,7 @@ export default function Confidentialite() {
         <div className="card reveal" style={{ maxWidth: 760, margin: "0 auto", lineHeight: 1.7 }}>
         <h2 className="card-title">Responsable du traitement</h2>
           <p>
-            <b>MMAxis</b> — Malcolm Malglaive — SIRET À COMPLÉTER — contact : contact@boostrepu.fr.<br />
+            <b>MMAxis</b> — Malcolm Malglaive — 911824753 — contact : contact@boostrepu.fr.<br />
             Le traitement est mis en œuvre dans le cadre du service BoostRepu, édité par MMAxis.
           </p>
 
