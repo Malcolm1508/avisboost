@@ -245,25 +245,40 @@ export default function PostVisual({ businessName, logoUrl }) {
   }
 
   /* ---------- STYLE 2 : AVIS GOOGLE ---------- */
+    /* ---------- STYLE 2 : AVIS GOOGLE ---------- */
   function drawGoogle(ctx, F, T) {
     const W = F.w, H = F.h;
     const P = format === "story" ? 120 : 96;
     const cardX = P, cardW = W - 2 * P;
     const cardY = H * (format === "story" ? 0.20 : 0.16);
     const pad = format === "story" ? 78 : 64;
+    const story = format === "story";
 
+    // --- mesure du texte pour calculer la hauteur de carte
     const txt = review || "Collez un avis pour voir l'aperçu…";
-    ctx.textAlign = "left"; ctx.textBaseline = "alphabetic";
     const innerW = cardW - 2 * pad;
-    const bodySize = format === "story" ? 46 : 40;
+    const bodySize = story ? 46 : 40;
     ctx.font = `400 ${bodySize}px "Inter", Arial, sans-serif`;
     let lines = wrap(ctx, txt, innerW);
-    const maxLines = format === "story" ? 12 : 9;
-    if (lines.length > maxLines) { lines = lines.slice(0, maxLines); lines[lines.length - 1] = lines[lines.length - 1].replace(/[.,;:\s]+$/, "") + "\u2026"; }
+    const maxLines = story ? 12 : 9;
+    if (lines.length > maxLines) {
+      lines = lines.slice(0, maxLines);
+      lines[lines.length - 1] = lines[lines.length - 1].replace(/[.,;:\s]+$/, "") + "\u2026";
+    }
     const lh = bodySize * 1.45;
-    const headH = format === "story" ? 200 : 176;
-    const cardH = headH + lines.length * lh + pad * 1.4;
 
+    // --- repères verticaux, empilés de haut en bas (aucun chevauchement)
+    const avR = story ? 46 : 40;
+    const headerTop = cardY + pad;               // haut du bloc entête
+    const avX = cardX + pad + avR;
+    const avY = headerTop + avR;                  // centre avatar
+    const starOuter = story ? 24 : 20;
+    const starY = avY + avR + (story ? 46 : 40) + starOuter;  // étoiles SOUS l'avatar
+    const bodyTop = starY + starOuter + (story ? 44 : 38);    // texte SOUS les étoiles
+    const bodyH = lines.length * lh;
+    const cardH = (bodyTop - cardY) + bodyH + pad;            // fin = texte + marge basse
+
+    // --- carte blanche
     ctx.save();
     ctx.shadowColor = "rgba(0,0,0,.28)";
     ctx.shadowBlur = 48; ctx.shadowOffsetY = 20;
@@ -272,45 +287,42 @@ export default function PostVisual({ businessName, logoUrl }) {
     ctx.fill();
     ctx.restore();
 
-    // pastille initiale
+    // --- avatar (pastille initiale)
     const av = (author.trim() || "Client").charAt(0).toUpperCase();
-    const avR = format === "story" ? 46 : 40;
-    const avX = cardX + pad + avR, avY = cardY + pad + avR;
-    ctx.fillStyle = T.bg2 === "#f1f1f8" ? "#5b21b6" : T.bg2;
+    ctx.fillStyle = (T.bg2 === "#f1f1f8") ? "#5b21b6" : T.bg2;
     ctx.beginPath(); ctx.arc(avX, avY, avR, 0, Math.PI * 2); ctx.fill();
     ctx.fillStyle = "#fff";
     ctx.textAlign = "center"; ctx.textBaseline = "middle";
     ctx.font = `600 ${avR}px "Plus Jakarta Sans", Arial, sans-serif`;
     ctx.fillText(av, avX, avY + 2);
 
-    // nom + date
+    // --- nom + date, à droite de l'avatar
+    const textX = avX + avR + 28;
     ctx.textAlign = "left"; ctx.textBaseline = "alphabetic";
     ctx.fillStyle = "#202124";
-    ctx.font = `600 ${format === "story" ? 42 : 36}px "Inter", Arial, sans-serif`;
-    ctx.fillText(author.trim() || "Client Google", avX + avR + 28, avY - 6);
+    ctx.font = `600 ${story ? 42 : 36}px "Inter", Arial, sans-serif`;
+    ctx.fillText(author.trim() || "Client Google", textX, avY - (story ? 8 : 6));
     ctx.fillStyle = "#70757a";
-    ctx.font = `400 ${format === "story" ? 30 : 26}px "Inter", Arial, sans-serif`;
-    ctx.fillText("récemment", avX + avR + 28, avY + (format === "story" ? 40 : 34));
+    ctx.font = `400 ${story ? 30 : 26}px "Inter", Arial, sans-serif`;
+    ctx.fillText("récemment", textX, avY + (story ? 34 : 30));
 
-    // étoiles VECTORIELLES, jaune Google, alignées sous le nom
-    const starY = avY + (format === "story" ? 92 : 80);
+    // --- logo "G" en haut à droite
+    ctx.textAlign = "right"; ctx.textBaseline = "alphabetic";
+    ctx.font = `700 ${story ? 46 : 40}px "Inter", Arial, sans-serif`;
+    ctx.fillStyle = "#4285F4";
+    ctx.fillText("G", cardX + cardW - pad, headerTop + (story ? 34 : 30));
+
+    // --- étoiles VECTORIELLES, sur leur propre ligne, alignées à gauche du contenu
     drawStars(ctx, {
-      x: avX + avR + 28, y: starY,
-      outer: format === "story" ? 22 : 19, n: nStars(),
-      on: "#fbbc04", off: "#dadce0", align: "left",
+      x: cardX + pad, y: starY, outer: starOuter,
+      n: nStars(), on: "#fbbc04", off: "#dadce0", align: "left",
     });
 
-    // logo "G" Google en haut à droite
-    ctx.textAlign = "right"; ctx.textBaseline = "alphabetic";
-    ctx.font = `700 ${format === "story" ? 46 : 40}px "Inter", Arial, sans-serif`;
-    ctx.fillStyle = "#4285F4";
-    ctx.fillText("G", cardX + cardW - pad, cardY + pad + (format === "story" ? 30 : 26));
-
-    // corps de l'avis
-    ctx.textAlign = "left";
+    // --- corps de l'avis, sous les étoiles
+    ctx.textAlign = "left"; ctx.textBaseline = "alphabetic";
     ctx.fillStyle = "#3c4043";
     ctx.font = `400 ${bodySize}px "Inter", Arial, sans-serif`;
-    let y = cardY + headH + lh * 0.3;
+    let y = bodyTop;
     for (const line of lines) { ctx.fillText(line, cardX + pad, y); y += lh; }
 
     drawFooter(ctx, F, T);
