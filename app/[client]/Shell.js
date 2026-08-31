@@ -3,7 +3,8 @@ import { useEffect, useState } from "react";
 
 const SECTIONS = [
   { id: "tableau", label: "Tableau de bord", short: "Accueil", icon: "home" },
-  { id: "conversion", label: "Performance", short: "Perf.", icon: "target" },
+  { id: "objectif", label: "Objectif & coaching", short: "Coaching", icon: "target" },
+  { id: "conversion", label: "Performance", short: "Perf.", icon: "gauge" },
   { id: "activite", label: "Activité", short: "Activité", icon: "chart" },
   { id: "analyse", label: "Analyse & Insights", short: "Analyse", icon: "sparkle" },
   { id: "plan", label: "Plan d'action", short: "Plan", icon: "check" },
@@ -11,13 +12,14 @@ const SECTIONS = [
   { id: "visuel", label: "Studio visuel", short: "Studio", icon: "image" },
 ];
 
-const MOBILE = ["tableau", "activite", "plan", "repondre", "visuel"];
+const MOBILE = ["tableau", "objectif", "activite", "repondre", "visuel"];
 
 function Icon({ name }) {
   const p = { fill: "none", stroke: "currentColor", strokeWidth: 2, strokeLinecap: "round", strokeLinejoin: "round" };
   const paths = {
     home: <><path d="M3 10.5 12 3l9 7.5" {...p} /><path d="M5 9.5V21h14V9.5" {...p} /></>,
     target: <><circle cx="12" cy="12" r="9" {...p} /><circle cx="12" cy="12" r="4" {...p} /></>,
+    gauge: <><path d="M12 14a2 2 0 1 0 0-4 2 2 0 0 0 0 4z" {...p} /><path d="M12 12 8 8" {...p} /><path d="M4 18a9 9 0 1 1 16 0" {...p} /></>,
     chart: <><path d="M3 20h18" {...p} /><path d="M6 16v-5M11 16V7M16 16v-8M21 16v-3" {...p} /></>,
     sparkle: <><path d="m12 3 2 5.5L19.5 10 14 12l-2 5.5L10 12 4.5 10 10 8.5z" {...p} /></>,
     check: <><path d="M9 11.5 11.5 14 16 9" {...p} /><rect x="3.5" y="3.5" width="17" height="17" rx="5" {...p} /></>,
@@ -50,10 +52,7 @@ export default function Shell({ clientId, name, address, logoUrl, isDemo, childr
   function go(e, id) {
     e.preventDefault();
     const el = document.getElementById(id);
-    if (el) {
-      el.scrollIntoView({ behavior: "smooth", block: "start" });
-      setActive(id);
-    }
+    if (el) { el.scrollIntoView({ behavior: "smooth", block: "start" }); setActive(id); }
   }
 
   return (
