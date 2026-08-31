@@ -15,7 +15,7 @@ export default function MentionsLegales() {
             <b>MMAxis</b> — entreprise individuelle (micro-entreprise)<br />
             BoostRepu est une marque commerciale exploitée par MMAxis.<br />
             Responsable de la publication : Malcolm Malglaive<br />
-            SIRET : À COMPLÉTER<br />
+            SIRET : 911824753<br />
             E-mail : contact@boostrepu.fr<br />
             Téléphone : 07 77 76 07 72
           </p>
