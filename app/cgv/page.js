@@ -13,7 +13,7 @@ export default function CGV() {
           <h2 className="card-title">1. Objet</h2>
           <p>
             Les présentes conditions régissent la vente, par <b>MMAxis</b> (entreprise individuelle,
-            SIRET À COMPLÉTER), à des clients professionnels, d'une carte NFC et d'un abonnement au
+            911824753), à des clients professionnels, d'une carte NFC et d'un abonnement au
             service logiciel <b>BoostRepu</b>, solution en ligne de collecte, de suivi et de gestion
             de la réputation Google. BoostRepu est une marque commerciale exploitée par MMAxis ;
             l'ensemble des relations contractuelles et de la facturation relève de MMAxis.
