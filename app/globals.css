@@ -960,3 +960,212 @@ a{color:var(--brand-strong)}
 .lp-dark .lp-modal-row small{color:var(--d-mut);font-size:12.5px}
 
 @media (prefers-reduced-motion: reduce){.lp-dark *{animation:none!important;transition:none!important}}
+/* ============================================================
+   DASHBOARD — THÈME SOMBRE PREMIUM (façon Vercel/Linear)
+   À coller à la FIN de globals.css. Tout est scopé sous .app,
+   donc ça ne touche QUE le tableau de bord client.
+   ============================================================ */
+
+.app{
+  --d-bg:#0a0612;
+  --d-bg2:#0f0a1e;
+  --d-panel:rgba(255,255,255,.035);
+  --d-panel-2:rgba(255,255,255,.06);
+  --d-brd:rgba(255,255,255,.09);
+  --d-brd-hover:rgba(139,92,246,.4);
+  --d-txt:#f4f2fb;
+  --d-mut:#a49ec7;
+  --d-mut2:#7c7699;
+  --d-field:#140f26;
+  --v:#8b5cf6;
+  --v2:#a855f7;
+  --v-glow:rgba(139,92,246,.35);
+}
+
+/* ---------- COQUILLE ---------- */
+.app{background:var(--d-bg);color:var(--d-txt)}
+.app .main{background:radial-gradient(ellipse 100% 50% at 80% -10%,rgba(139,92,246,.14),transparent 60%),var(--d-bg)}
+.app ::selection{background:rgba(139,92,246,.35)}
+
+/* sidebar déjà sombre : on la raffine */
+.app .sidebar{background:var(--d-bg2);border-right:1px solid var(--d-brd)}
+.app .sidebar-name{color:#fff}
+.app .nav-item{color:var(--d-mut)}
+.app .nav-item:hover{background:rgba(255,255,255,.05);color:#fff}
+.app .nav-item.active{background:linear-gradient(135deg,rgba(139,92,246,.9),rgba(109,40,217,.9));color:#fff;
+  box-shadow:0 8px 24px -10px var(--v-glow)}
+.app .sidebar-promo{background:var(--d-panel);border:1px solid var(--d-brd)}
+.app .sidebar-foot a{color:var(--d-mut2)}
+.app .sidebar-foot a:hover{color:#fff}
+
+/* topbar avec lueur + grille */
+.app .topbar{position:relative;overflow:hidden;
+  background:linear-gradient(160deg,#160f2e,#0d0920);border-bottom:1px solid var(--d-brd)}
+.app .topbar::before{content:"";position:absolute;inset:0;
+  background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);
+  background-size:44px 44px;
+  mask-image:radial-gradient(ellipse 70% 100% at 70% 0%,#000,transparent 70%);
+  -webkit-mask-image:radial-gradient(ellipse 70% 100% at 70% 0%,#000,transparent 70%)}
+.app .topbar::after{content:"";position:absolute;width:400px;height:400px;border-radius:50%;
+  background:rgba(139,92,246,.28);filter:blur(90px);top:-200px;right:-60px;pointer-events:none}
+.app .topbar-inner{position:relative;z-index:1}
+.app .topbar-title{color:#fff}
+.app .topbar-addr{color:var(--d-mut)}
+.app .badge-demo{background:rgba(139,92,246,.2);border:1px solid rgba(139,92,246,.4);color:#d6c8ff}
+.app .topbar-logo{box-shadow:0 10px 30px -10px rgba(0,0,0,.6)}
+.app .brand-mono{color:#a855f7}
+
+/* ---------- CARTES (verre) ---------- */
+.app .card{background:var(--d-panel);border:1px solid var(--d-brd);
+  box-shadow:0 20px 50px -30px rgba(0,0,0,.7);backdrop-filter:blur(6px)}
+.app .card-title{color:#fff}
+.app .card-hint,.app .section-sub{color:var(--d-mut)}
+.app .section-title{color:#fff}
+.app .tag{background:rgba(139,92,246,.14);border:1px solid rgba(139,92,246,.3);color:#c4b5fd}
+
+/* ---------- KPIs ---------- */
+.app .kpi{background:var(--d-panel);border:1px solid var(--d-brd);transition:border-color .2s,transform .2s}
+.app .kpi:hover{border-color:var(--d-brd-hover);transform:translateY(-2px)}
+.app .kpi-n{color:#fff}
+.app .kpi-l{color:var(--d-mut)}
+.app .kpi-ic{box-shadow:0 8px 22px -10px var(--v-glow)}
+
+/* ---------- HERO STAT ---------- */
+.app .hero-stat{position:relative;overflow:hidden;
+  background:linear-gradient(150deg,#1c1140,#0f0a1e);border:1px solid rgba(139,92,246,.28)}
+.app .hero-stat::before{content:"";position:absolute;width:340px;height:340px;border-radius:50%;
+  background:rgba(139,92,246,.3);filter:blur(80px);top:-140px;right:-40px;pointer-events:none}
+.app .hero-stat > *{position:relative;z-index:1}
+.app .hero-stat-num{color:#fff}
+.app .hero-stat-label{color:var(--d-mut)}
+.app .hero-chip{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12)}
+.app .hero-chip .n{color:#fff}
+.app .hero-chip .l{color:var(--d-mut)}
+
+/* ---------- CARTES COACHING ---------- */
+.app .coach{background:var(--d-panel);border:1px solid var(--d-brd);transition:border-color .2s,transform .2s}
+.app .coach:hover{border-color:var(--d-brd-hover);transform:translateY(-2px)}
+.app .coach-title{color:#fff}
+.app .coach-sub{color:var(--d-mut)}
+.app .coach-msg{color:var(--d-txt)}
+.app .coach-msg b{color:#fff}
+.app .coach-ic{box-shadow:0 8px 22px -10px rgba(0,0,0,.5)}
+.app .coach-msg-ok{color:#6ee7b7}
+.app .coach-msg-ok b{color:#6ee7b7}
+.app .coach-msg-alert{color:#fcd34d}
+.app .coach-msg-alert b{color:#fde68a}
+.app .coach-alert{border-color:rgba(251,191,36,.4);
+  background:linear-gradient(180deg,rgba(251,191,36,.06),var(--d-panel))}
+
+/* ---------- OBJECTIF ---------- */
+.app .goal-current{color:#fff}
+.app .goal-target{color:var(--d-mut)}
+.app .goal-pct{color:#c4b5fd}
+.app .goal-bar{background:rgba(255,255,255,.08);border:1px solid var(--d-brd)}
+.app .goal-fill{background:linear-gradient(90deg,#a855f7,#6d28d9)}
+.app .goal-msg{color:var(--d-txt)}
+.app .goal-msg b{color:#fff}
+.app .goal-msg.goal-done{color:#6ee7b7}
+
+/* ---------- DONUT + MÉTRIQUES ---------- */
+.app .donut{background:conic-gradient(var(--v2) calc(var(--pct,0)*1%),rgba(255,255,255,.09) 0)}
+.app .donut-in{background:var(--d-bg2)!important}
+.app .donut::after{background:var(--d-bg2)!important}
+.app .donut-n{color:#fff}
+.app .donut-l{color:var(--d-mut)}
+.app .metric{background:var(--d-panel-2);border:1px solid var(--d-brd)}
+.app .metric-icon{background:rgba(139,92,246,.16);color:#c4b5fd}
+.app .metric-icon.vert{background:rgba(16,185,129,.16);color:#6ee7b7}
+.app .metric-icon.or{background:rgba(251,191,36,.16);color:#fcd34d}
+.app .metric-n{color:#fff}
+.app .metric-l{color:var(--d-mut)}
+
+/* ---------- GRAPHIQUE / ACTIVITÉ ---------- */
+.app .bar-fill{background:linear-gradient(180deg,#a855f7,#6d28d9)}
+.app .bar.today .bar-fill{background:linear-gradient(180deg,#fbbf24,#d97706)}
+.app .bar-label{color:var(--d-mut2)}
+.app .bar-val{background:#1a1330;border:1px solid var(--d-brd);color:#fff}
+.app .period-total{color:#fff}
+.app .chart-foot{color:var(--d-mut)}
+.app .seg{background:rgba(255,255,255,.05);border:1px solid var(--d-brd)}
+.app .seg button{color:var(--d-mut)}
+.app .seg button.active{background:linear-gradient(135deg,#8b5cf6,#6d28d9);color:#fff}
+.app .delta.up{background:rgba(16,185,129,.16);color:#6ee7b7;border-color:rgba(16,185,129,.3)}
+.app .delta.down{background:rgba(248,113,113,.16);color:#fca5a5;border-color:rgba(248,113,113,.3)}
+.app .delta.flat{background:rgba(255,255,255,.06);color:var(--d-mut);border-color:var(--d-brd)}
+
+/* ---------- CHAMPS DE SAISIE (fond plus clair pour le confort) ---------- */
+.app .label{color:var(--d-txt)}
+.app .input,.app .textarea,.app .select{
+  background:var(--d-field);border:1.5px solid var(--d-brd);color:#fff}
+.app .input::placeholder,.app .textarea::placeholder{color:var(--d-mut2)}
+.app .input:focus,.app .textarea:focus,.app .select:focus{
+  border-color:var(--v);box-shadow:0 0 0 4px rgba(139,92,246,.2)}
+.app .footnote,.app .empty-note,.app .pv-opt{color:var(--d-mut)}
+.app .empty-state{background:var(--d-panel-2);border-color:var(--d-brd);color:var(--d-mut)}
+
+/* ---------- BOUTONS ---------- */
+.app .btn-primary{background:linear-gradient(135deg,#8b5cf6,#6d28d9);
+  box-shadow:0 8px 24px -8px var(--v-glow)}
+.app .btn-primary:hover{box-shadow:0 12px 32px -8px var(--v-glow)}
+.app .btn-ghost{background:rgba(255,255,255,.05);color:#fff;border:1.5px solid var(--d-brd)}
+.app .btn-ghost:hover{background:rgba(255,255,255,.1)}
+.app .pill{background:rgba(139,92,246,.16);border:1px solid rgba(139,92,246,.3);color:#c4b5fd}
+
+/* ---------- PLAN D'ACTION ---------- */
+.app .focus-box{background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.3)}
+.app .focus-box b{color:#c4b5fd}
+.app .progress-track{background:rgba(255,255,255,.08);border:1px solid var(--d-brd)}
+.app .progress-fill{background:linear-gradient(90deg,#a855f7,#6d28d9)}
+.app .progress-label{color:#c4b5fd}
+.app .task{border-top:1px solid var(--d-brd);color:var(--d-txt)}
+.app .task .check{background:var(--d-field);border:2px solid var(--d-mut2)}
+.app .task.done .check{background:var(--v);border-color:var(--v)}
+.app .task-action{color:#fff}
+.app .task.done .task-action{color:var(--d-mut2)}
+.app .task-why{color:var(--d-mut)}
+.app .prio{border-top:1px solid var(--d-brd)}
+.app .prio-action{color:#fff}
+.app .prio-why{color:var(--d-mut)}
+
+/* ---------- ANALYSE ---------- */
+.app .analysis-resume{color:var(--d-txt)}
+.app .asec-head{color:#fff}
+.app .theme{border-top:1px solid var(--d-brd)}
+.app .theme-name{color:#fff}
+.app .theme-ex{color:var(--d-mut)}
+.app .freq{background:rgba(139,92,246,.14);border:1px solid rgba(139,92,246,.3);color:#c4b5fd}
+.app .axes li{background:var(--d-panel-2);border:1px solid var(--d-brd);color:var(--d-txt)}
+.app .sent-pos{background:rgba(16,185,129,.16);color:#6ee7b7;border:1px solid rgba(16,185,129,.3)}
+.app .sent-mid{background:rgba(251,191,36,.16);color:#fcd34d;border:1px solid rgba(251,191,36,.3)}
+.app .sent-neg{background:rgba(248,113,113,.16);color:#fca5a5;border:1px solid rgba(248,113,113,.3)}
+
+/* ---------- RÉPONSE IA ---------- */
+.app .reply{border:1px solid var(--d-brd)}
+.app .reply-head{background:var(--d-panel-2);border-bottom:1px solid var(--d-brd);color:var(--d-mut)}
+.app .reply-body{background:var(--d-field);color:var(--d-txt)}
+
+/* ---------- STUDIO VISUEL ---------- */
+.app .pv-preview{background:linear-gradient(135deg,#160f2e,#0f0a1e);border:1px solid var(--d-brd)}
+.app .pv-preview-hint{color:var(--d-mut2)}
+.app .pv-style{background:var(--d-field);border:1.5px solid var(--d-brd)}
+.app .pv-style:hover{border-color:var(--d-brd-hover)}
+.app .pv-style.active{border-color:var(--v);background:rgba(139,92,246,.12)}
+.app .pv-style-name{color:#fff}
+.app .pv-style-hint{color:var(--d-mut)}
+.app .pv-segment{background:rgba(255,255,255,.05);border:1px solid var(--d-brd)}
+.app .pv-seg-btn{color:var(--d-mut)}
+.app .pv-seg-btn.active{background:linear-gradient(135deg,#8b5cf6,#6d28d9);color:#fff}
+.app .pv-star{color:#3a3550}
+.app .pv-star.on{color:#fbbf24}
+.app .pv-swatch{box-shadow:0 0 0 1px var(--d-brd)}
+.app .pv-swatch.active{border-color:#fff;box-shadow:0 0 0 2px var(--v)}
+
+/* ---------- ÉTATS ---------- */
+.app .err{background:rgba(248,113,113,.12);border:1px solid rgba(248,113,113,.3);color:#fca5a5}
+.app .mono{background:var(--d-field);border:1px solid var(--d-brd);color:var(--d-txt)}
+
+/* mobile nav déjà sombre : léger raffinement */
+.app .mobile-nav{background:rgba(15,10,30,.92);border-top:1px solid var(--d-brd);backdrop-filter:blur(14px)}
+.app .mobile-nav a{color:var(--d-mut)}
+.app .mobile-nav a.active{color:#c4b5fd}
