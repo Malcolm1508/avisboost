@@ -1437,3 +1437,14 @@ a{color:var(--brand-strong)}
 }
 
 @media (prefers-reduced-motion: reduce){.dash *{animation:none!important;transition:none!important}}
+/* ===== Bloquer le slide horizontal parasite sur mobile ===== */
+html, body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/* Coquille du dashboard (couvre les deux structures possibles) */
+.dash, .app {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
