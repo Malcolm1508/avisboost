@@ -100,3 +100,17 @@ export default function Shell({ clientId, name, address, logoUrl, isDemo, tabs }
     </div>
   );
 }
+      {/* NAV MOBILE BASSE */}
+      <nav className="dash-mobile">
+        {TABS.map((t) => (
+          <button key={t.id}
+            className={active === t.id ? "active" : ""}
+            onClick={() => {
+              setActive(t.id);
+              requestAnimationFrame(() => window.scrollTo({ top: 0, behavior: "smooth" }));
+            }}>
+            <Icon name={t.icon} />
+            <span>{t.label.split(" ")[0]}</span>
+          </button>
+        ))}
+      </nav>
